@@ -114,8 +114,10 @@ msfReportsApp
 
         }
 		
+		var keyMap = [];
+		
 		var getRows = function(data2, row){
-			$('.reporttable').append(row);
+			//$('.reporttable').append(row);
 			var row = "";
 			for(var j=0;j<data2[0].programStages.length;j++){
 					$.when(
@@ -126,12 +128,11 @@ msfReportsApp
 						for(var k=0;k<data3.programStageDataElements.length;k++){
 							var nameDe = data3.programStageDataElements[k].dataElement.name;
 							var idDe = data3.programStageDataElements[k].dataElement.id;
-							row = "<td class='rows' id='"+idDe+"'><b>"+nameDe+"</b></td>";
-							$('.reporttable').append(row);
+							keyMap[idDe] = nameDe;
 						}
-						
 					});
-				}						
+				}
+					return keyMap;
 		};
 	
 	$scope.generateReport = function(program){
@@ -147,11 +148,22 @@ msfReportsApp
             ).then(function (data1,data2) {
 					json =  data2;
 				for(var i=0;i<data1[0].trackedEntityAttributes.length;i++){
-					row = row + "<td class='rows' id='"+ data1[0].trackedEntityAttributes[i].id +"'><b>"+ data1[0].trackedEntityAttributes[i].displayName +"</b></td>";
+					row = row + "<th class='rows' id='"+ data1[0].trackedEntityAttributes[i].id +"'><b>"+ data1[0].trackedEntityAttributes[i].displayName +"</b></th>";
 				}	
 				
-				getRows(json , row);
-				//$('.reporttable').append("</tr>");
+				var keyMapp = getRows(json , row);
+				console.log(keyMapp);
+				var index = 0;
+						Object.keys(keyMapp).forEach(function(key) {
+							// console.log(key + ': ' + keyMapp[key]);
+							row = row + "<th class='rows' id='"+ key +"'>"+ keyMapp[key] +"</th>";
+							index++;
+							if(index == Object.keys(keyMapp).length){
+								$('.reporttable').append( row + "</tr>");
+							}
+							
+						});
+				
             });
 			
 	};
