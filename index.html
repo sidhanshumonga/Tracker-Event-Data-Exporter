@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html ng-app="msfReportsApp">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Tracker & Event Report</title>
+
+    <script  type="text/javascript" ></script>
+    <script type="text/javascript" src="scripts/lib/jQuery/jquery.min.js"></script>
+    <script type="text/javascript" src="scripts/lib/jQuery/ui/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="scripts/lib/jQuery/jquery.plugin.min.js"></script>
+    <script type="text/javascript" src="scripts/lib/jQuery/jquery.tmpl.js"></script>
+
+
+    <script type="text/javascript" src="scripts/lib/bootstrap/js/bootstrap.min.js"></script>
+    <link type="text/css" rel="stylesheet"  href="scripts/lib/bootstrap/css/bootstrap.min.css">
+
+    <script type="text/javascript" src="scripts/lib/angular/angular.js"></script>
+    <script type="text/javascript" src="scripts/lib/angular/angular-resource.js"></script>
+    <script type="text/javascript" src="scripts/lib/angular/angular-route.js"></script>
+    <script type="text/javascript" src="scripts/lib/angular/angular-cookies.js"></script>
+    <script type="text/javascript" src="scripts/lib/angular/angular-animate.js"></script>
+    <script type="text/javascript" src="scripts/lib/angular/angular-messages.js"></script>
+    <script type="text/javascript" src="scripts/lib/angular/angular-sanitize.js"></script>
+    <script type="text/javascript" src="scripts/lib/angular/ui-bootstrap-tpls-0.14.0.js"></script>
+    <script type="text/javascript" src="scripts/lib/angular/plugins/angular-translate.min.js"></script>
+
+
+
+    <!--DHIS commons libraries
+    <script type="text/javascript" src="scripts/lib/commons/commons.js"></script>
+    <script type="text/javascript" src="scripts/lib/commons/commons.ajax.js"></script>
+        <script type="text/javascript" src="scripts/lib/commons/underscore.min.js"></script>
+
+-->
+<!--calender-->
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/jQuery/calendars/jquery.calendars.min.js"></script>
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/jQuery/calendars/jquery.calendars.picker.min.js"></script>
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/jQuery/calendars/jquery.calendars.plus.min.js"></script>
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/jQuery/calendars/jquery.calendars.picker.ext.js"></script>
+
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/jQuery/calendars/jquery.calendars.coptic.min.js"></script>
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/jQuery/calendars/jquery.calendars.ethiopian.min.js"></script>
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/jQuery/calendars/jquery.calendars.islamic.min.js"></script>
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/jQuery/calendars/jquery.calendars.julian.min.js"></script>
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/jQuery/calendars/jquery.calendars.nepali.min.js"></script>
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/jQuery/calendars/jquery.calendars.thai.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="../../../dhis-web-commons/javascripts/jQuery/ui/css/redmond/jquery-ui.css">
+    <link type="text/css" rel="stylesheet" href="../../../dhis-web-commons/javascripts/jQuery/calendars/css/ui-redmond.calendars.picker.css">
+
+<!--cal ends-->
+    <script type="text/javascript" src="scripts/lib/commons/dhis2.util.js"></script>
+    <script type="text/javascript" src="scripts/lib/commons/commons.js"></script>
+    <script type="text/javascript" src="scripts/lib/commons/commons.ajax.js"></script>
+    <script type="text/javascript" src="scripts/lib/commons/ouwt/ouwt.js"></script>
+
+
+    <script type="text/javascript" src="scripts/lib/commons/dhis2.angular.filters.js"></script>
+    <script type="text/javascript" src="scripts/lib/commons/dhis2.angular.directives.js"></script>
+    <script type="text/javascript" src="scripts/lib/commons/dhis2.angular.services.js"></script>
+
+    <script type="text/javascript" src="scripts/lib/commons/dhis2.storage.ss.js"></script>
+    <script type="text/javascript" src="scripts/lib/commons/dhis2.storage.ls.js"></script>
+    <script type="text/javascript" src="scripts/lib/commons/dhis2.storage.idb.js"></script>
+    <script type="text/javascript" src="scripts/lib/commons/dhis2.storage.memory.js"></script>
+    <script type="text/javascript" src="scripts/lib/commons/dhis2.storage.js"></script>
+
+    <script type="text/javascript" src="scripts/lib/commons/dhis2.translate.js"></script>
+    <script type="text/javascript" src="scripts/lib/commons/dhis2.menu.js"></script>
+    <script type="text/javascript" src="scripts/lib/commons/dhis2.menu.ui.js"></script>
+
+    <link type="text/css" rel="stylesheet" media="screen" href="scripts/lib/commons/css/menu.css">
+    <link type="text/css" rel="stylesheet" media="screen" href="scripts/lib/commons/css/widgets.css">
+
+
+    <link type="text/css" rel="stylesheet" media="screen" href="styles/style.css">
+
+    <script type="text/javascript" src="scripts/app.js"></script>
+    <script type="text/javascript" src="scripts/services.js"></script>
+    <script type="text/javascript" src="scripts/home-controller.js"></script>
+    <script type="text/javascript" src="scripts/leftbar-menu-controller.js"></script>
+    <script type="text/javascript" src="scripts/today-schedule-controller.js"></script>
+    <script type="text/javascript" src="scripts/event-report-controller.js"></script>
+    <script type="text/javascript" src="scripts/utility-functions.js"></script>
+    <script type="text/javascript" src="scripts/lib/moment/moment.js"></script>
+    <script type="text/javascript" src="scripts/lib/moment/filesaver.js"></script>
+
+    <script type="text/javascript" src="scripts/constants.js"></script>
+    <script type="text/javascript" src="scripts/exporter.js"></script>
+    <script type="text/javascript" src="scripts/ajax-calls.js"></script>
+    <script type="text/javascript" src="scripts/bluebird.js"></script>
+
+
+</head>
+<body>
+<d2-header-bar></d2-header-bar>
+
+<div ng-view></div>
+
+</body>
+</html>

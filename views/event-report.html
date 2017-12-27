@@ -1,0 +1,76 @@
+<div id="leftBar">
+    <d2-left-bar></d2-left-bar>
+
+    <div id="orgUnitTree">
+        <ul>
+        </ul>
+    </div>
+
+</div>
+
+<div class="row" id="mainPage">
+    <div class="col-sm-8 col-md-6">
+        <table class="table table-borderless table-striped">
+            <tr>
+                <td>{{'orgUnitLabel' | translate}}</td>
+                <td>
+                    <input type="text" class="form-control" value="{{selectedOrgUnit.name|| 'please_select'| translate}}" ng-disabled="true">
+                </td>
+            </tr>
+            <tr>
+            <td >
+                {{'programs'| translate}}
+            </td>
+            <td class='col-sm-4 col-md-3'>
+                <select ng-model="selectedProgram"
+                        class="form-control"
+                        ng-options="program.name for program in programs | orderBy: 'name'">
+                    <!--ng-disabled="selectedOrgUnit.programs.length < 1">-->
+                    <option value="">Please select program</option>
+                </select>
+            </td>
+        </tr>
+
+        </table>
+        <label>Choose Date Between </label>
+
+        <input calendar ng-model='startdate' ng-change="updateStartDate(startdate);" required />
+        <input calendar ng-model='enddate'  ng-change="updateEndDate(enddate);" required/>
+
+        <div class="col-md-6 trim">
+            <button type="button" class="btn btn-primary" ng-click="generateReport(selectedProgram, report, selectedOuMode);showLoad();" ng-disabled="!selectedProgram">{{'generate_report'| translate}}</button>
+        </div>
+        <div class="col-md-6 trim">
+            <button id="btnExport" class="btn btn-primary" ng-click="fnExcelReport();" ng-disabled="!selectedProgram"> Export To Excel </button>
+        </div>
+
+    </div>
+
+    <div id ="divId">
+        <table id="tableid" class="table-bordered" style="float:left" >
+            <tr>
+                <th ng-repeat="ps in program.programStages"
+                    colspan="{{ps.programStageDataElements.length+2}}">{{ps.name}}</th>
+
+            </tr>
+            <tr>
+                <th ng-repeat="de in psDEs">{{de.dataElement.name}}</th>
+
+            </tr>
+
+           <tbody>
+            <tr ng-repeat="event in eventList track by $index">
+                <td ng-repeat="de in psDEs">{{eventDeWiseValueMap[event.event + "-" +de.dataElement.id]}}</td>
+            </tr>
+
+            </tbody>
+
+        </table>
+    </div>
+</div>
+
+<div class="row" ng-if="selectedOrgUnit.programs.length > 0 && !selectedProgram">
+    <div class="col-sm-8 col-md-6 vertical-spacing">
+        <div class="alert alert-warning">{{'please_select_program_report'| translate}}</div>
+    </div>
+</div>

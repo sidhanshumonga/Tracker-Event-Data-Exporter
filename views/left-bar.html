@@ -1,0 +1,11 @@
+<div id="hideLeftBar">
+    <a href="index.action" title="{{'show_main_menu'| translate}}" id="showMainMenuLink"><i class="fa fa-home leftBarIcon"></i></a>
+    <a href="javascript:dhis2.leftBar.hideAnimated()" title="{{'hide_menu'| translate}}" id="hideMainMenuLink"><i class="fa fa-arrow-left leftBarIcon"></i></a>
+    <a href="javascript:dhis2.leftBar.extendAnimated()" title="{{'extend_menu'| translate}}" id="extendMainMenuLink"><i class="fa fa-arrow-right leftBarIcon"></i></a>
+</div>
+<div class="left-bar-menu" ng-controller="LeftBarMenuController">
+    <ul class="nav nav-pills nav-stacked">
+        <li><a href ng-click="showTodaySchedule()">{{"Generate Tracker Reports"| translate}}</a></li>
+        <li><a href ng-click="showEventReport()">{{"Generate Event Reports"}}</a></li>
+    </ul>
+</div>
