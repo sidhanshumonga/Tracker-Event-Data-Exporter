@@ -114,21 +114,29 @@ msfReportsApp
 
         }
         var finalKeyMap = [];
+        var tempMap = [];
         var getDataValues =  function(keyMap,program){
           var tei= "";
-          var newRow = "<tr>";
+
           $.ajax({
                     async: false,
                     type: "GET",
-                    url: "../../trackedEntityInstances.json?ou="+$scope.selectedOrgUnit.id+"&program="+program.id,
+                    url: "../../enrollments.json?ou="+$scope.selectedOrgUnit.id+"&program="+ program.id +"&programStartDate="+ $scope.startdateSelected +"&programEndDate="+ $scope.enddateSelected +"&skipPaging=true",
+                    success: function (data0) {
+                      for(var g=0;g<data0.enrollments.length;g++){
+                        tei = data0.enrollments[g].trackedEntityInstance;
+                        document.getElementById('perc').innerHTML = g +"/"+ data0.enrollments.length;
+
+          $.ajax({
+                    async: false,
+                    type: "GET",
+                    url: "../../trackedEntityInstances/"+ tei +".json?fields=*",
                     success: function (data) {
-                      for(var l=0;l<data.trackedEntityInstances.length;l++){
-                        tei = data.trackedEntityInstances[l].trackedEntityInstance;
-                          for(var e=0;e<data.trackedEntityInstances[l].attributes.length;e++){
-                            var count = keyMap[data.trackedEntityInstances[l].attributes[e].attribute];
-                            finalKeyMap[count] = data.trackedEntityInstances[l].attributes[e].value;
+                          for(var e=0;e<data.attributes.length;e++){
+                            var count = keyMap[data.attributes[e].attribute];
+                            tempMap[count] = data.attributes[e].value;
                           }
-                      }
+                          // tempMap = finalKeyMap;
                       $.ajax({
                                 async: false,
                                 type: "GET",
@@ -136,13 +144,16 @@ msfReportsApp
                                 success: function (data5) {
 
                                   for(var m=0;m<data5.events.length;m++){
+                                    var finalKeyMap = tempMap;
+
+                                    var newRow = "<tr>";
                                     for(var n=0;n<data5.events[m].dataValues.length;n++){
                                       var count2 = keyMap[data5.events[m].dataValues[n].dataElement];
                                       finalKeyMap[count2] = data5.events[m].dataValues[n].value;
                                     }
 
 
-                                    for(var h=1;h<=keyMap2.length;h++){
+                                    for(var h=1;h<keyMap2.length;h++){
                                       if(finalKeyMap.hasOwnProperty(h)){
                                         newRow =  newRow + "<td>"+finalKeyMap[h]+"</td>";
                                       }
@@ -156,24 +167,29 @@ msfReportsApp
                                   }
 
                               });
-                            }
+                          }
 
 
                   });
+                }
+
+                document.getElementById('loader').style.display = "none";
+              }
+              });
         };
 
         var keyMap = [];
-		var keyMap2 = [];
-
-  var getRows = function(row,hr,program){
+		    var keyMap2 = [];
+        var json = "";
+  var getRows = function(row,hr,program,index){
     //$('.reporttable').append(row);
     //var row = "";
-    var index = keyMap2.length;
     $.ajax({
               async: false,
               type: "GET",
               url: "../../programs/"+ program.id +".json?fields=programStages[id,name]",
               success: function (data2) {
+                json = data2;
       for(var j=0;j<data2.programStages.length;j++){
 
         $.ajax({
@@ -181,17 +197,21 @@ msfReportsApp
                   type: "GET",
                   url: "../../programStages/"+data2.programStages[j].id+".json?fields=programStageDataElements[dataElement[id,name]]&order=displayName:ASC",
                   success: function (data3) {
-                    hr = hr + "<th colspan ='"+ (data3.programStageDataElements.length) +"'>"+ data2.programStages[j].name +"</th>";
+                    hr = hr + "<th colspan ='"+ (data3.programStageDataElements.length) +"'>"+ json.programStages[j].name +"</th>";
           for(var k=0;k<data3.programStageDataElements.length;k++){
             var nameDe = data3.programStageDataElements[k].dataElement.name;
             var idDe = data3.programStageDataElements[k].dataElement.id;
             row = row + "<th class='rows' id='"+idDe+"'>"+nameDe+"</th>";
-            keyMap[idDe] = index + k + 1;
-            keyMap2[index + k + 1] = idDe;
+            keyMap[idDe] = index;
+            keyMap2[index] = idDe;
+            index++;
           }
+
           if(j == data2.programStages.length-1){
                 $('.reporttable').append(hr + "</tr>" + row + "</tr>");
-               console.log(keyMap2);
+                console.log(keyMap2);
+               console.log(keyMap);
+               console.log(Object.keys(keyMap2).length);
                console.log(Object.keys(keyMap).length);
                 getDataValues(keyMap,program);
           }
@@ -204,8 +224,15 @@ msfReportsApp
   };
 
   $scope.generateReport = function(program){
+
+    $(".reporttable tbody").remove();
+$(".reporttable tbody").detach();
+
+  document.getElementById('loader').style.display = "block";
+
       var row =  "<tr>";
       var json = "";
+      var index = 1;
       $.ajax({
                 async: true,
                 type: "GET",
@@ -213,12 +240,15 @@ msfReportsApp
                 success: function (data1) {
           //json =  data2;
         for(var i=0;i<data1.trackedEntityAttributes.length;i++){
-          keyMap[data1.trackedEntityAttributes[i].id] = i+1;
-          keyMap2[i+1] = data1.trackedEntityAttributes[i].id;
+          keyMap[data1.trackedEntityAttributes[i].id] = index;
+          keyMap2[index] = data1.trackedEntityAttributes[i].id;
+          index++;
           row = row + "<th class='rows' id='"+ data1.trackedEntityAttributes[i].id +"'>"+ data1.trackedEntityAttributes[i].displayName +"</th>";
         }
+        //console.log(keyMap);
+        //console.log(keyMap2);
         var hr = "<tr><th colspan='"+(data1.trackedEntityAttributes.length)+"'>Attributes</th>";
-        getRows(row,hr,program);
+        getRows(row,hr,program,index);
         //console.log(keyMapp);
         //var index = 0;
         //    Object.keys(keyMapp).forEach(function(key) {
