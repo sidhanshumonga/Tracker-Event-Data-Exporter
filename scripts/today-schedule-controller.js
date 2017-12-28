@@ -129,9 +129,13 @@ msfReportsApp
 
         var getEvents =  function(tei){
 
-
-          var url1 = "../../events.json?trackedEntityInstance="+tei+"&order=eventDate:ASC";
-          $.when(getAjaxData(url1)).done(function(data5){
+          $.ajax({
+            async: false,
+            type: "GET",
+            dataType: "json",
+            contentType: "application/json",
+            url: "../../events.json?trackedEntityInstance="+tei+"&order=eventDate:ASC",
+             success: function (data5) {
 
 
             $.each( data5.events,function(m,values){
@@ -157,9 +161,8 @@ msfReportsApp
                 }
               }
               $('.reporttable').append(newRow + "</tr>");
-              document.getElementById('loader').style.display = "none";
             });
-
+}
                   });
 
 
@@ -167,8 +170,13 @@ msfReportsApp
 
         var getTeis =  function(tei){
 
-          var url1 = "../../trackedEntityInstances/"+ tei +".json?fields=*";
-          $.when(getAjaxData(url1)).done(function(data){
+          $.ajax({
+            async: false,
+            type: "GET",
+            dataType: "json",
+            contentType: "application/json",
+            url: "../../trackedEntityInstances/"+ tei +".json?fields=*",
+             success: function (data) {
 
 
             $.each(data.attributes,function(e,values){
@@ -178,6 +186,9 @@ msfReportsApp
                                           if(value == "false"){value  = "No"}
                                           tempMap[count] = value;
             });
+
+            getEvents(tei);
+}
                   });
 
         };
@@ -185,8 +196,13 @@ msfReportsApp
         var getDataValues =  function(keyMap,program){
           var tei= "";
 
-          var url1 = "../../enrollments.json?ou="+$scope.selectedOrgUnit.id+"&program="+ program.id +"&programStartDate="+ $scope.startdateSelected +"&programEndDate="+ $scope.enddateSelected +"&skipPaging=true";
-          $.when(getAjaxData(url1)).done(function(data0){
+          $.ajax({
+            async: false,
+            type: "GET",
+            dataType: "json",
+            contentType: "application/json",
+            url: "../../enrollments.json?ou="+$scope.selectedOrgUnit.id+"&program="+ program.id +"&programStartDate="+ $scope.startdateSelected +"&programEndDate="+ $scope.enddateSelected +"&skipPaging=true",
+             success: function (data0) {
 
               $.each(data0.enrollments,function(g,value){
                 tei = data0.enrollments[g].trackedEntityInstance;
@@ -194,9 +210,10 @@ msfReportsApp
                 flagCount = g;
                 document.getElementById('perc').innerHTML = parseInt((flagCount/flag)*100) + "%";
                 getTeis(tei);
-                getEvents(tei);
               });
 
+              document.getElementById('loader').style.display = "none";
+}
               });
         };
 
@@ -235,16 +252,17 @@ msfReportsApp
               index++;
             }
 
-                if(j == json.programStages.length-1){
-                      $('.reporttable').append(hr + "</tr>" + row + "</tr>");
-                      console.log(keyMap2);
-                     console.log(keyMap);
-                     console.log(Object.keys(keyMap2).length);
-                     console.log(Object.keys(keyMap).length);
-                      getDataValues(keyMap,program);
-                }
+
               }
           });
+          if(j == json.programStages.length-1){
+                $('.reporttable').append(hr + "</tr>" + row + "</tr>");
+                console.log(keyMap2);
+               console.log(keyMap);
+               console.log(Object.keys(keyMap2).length);
+               console.log(Object.keys(keyMap).length);
+                getDataValues(keyMap,program);
+          }
         }
 }
     });
