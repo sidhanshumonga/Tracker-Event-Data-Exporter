@@ -125,7 +125,7 @@ msfReportsApp
                     success: function (data0) {
                       for(var g=0;g<data0.enrollments.length;g++){
                         tei = data0.enrollments[g].trackedEntityInstance;
-                        document.getElementById('perc').innerHTML = g +"/"+ data0.enrollments.length;
+                        document.getElementById('perc').innerHTML = (g/data0.enrollments.length)*100;
 
           $.ajax({
                     async: false,
@@ -236,18 +236,18 @@ $(".reporttable tbody").detach();
       $.ajax({
                 async: true,
                 type: "GET",
-                url: "../../trackedEntityAttributes.json?order=displayName:ASC",
+                url: "../../programs/"+program.id+".json?fields=programTrackedEntityAttributes",
                 success: function (data1) {
           //json =  data2;
-        for(var i=0;i<data1.trackedEntityAttributes.length;i++){
-          keyMap[data1.trackedEntityAttributes[i].id] = index;
-          keyMap2[index] = data1.trackedEntityAttributes[i].id;
+        for(var i=0;i<data1.programTrackedEntityAttributes.length;i++){
+          keyMap[data1.programTrackedEntityAttributes[i].id] = index;
+          keyMap2[index] = data1.programTrackedEntityAttributes[i].id;
           index++;
-          row = row + "<th class='rows' id='"+ data1.trackedEntityAttributes[i].id +"'>"+ data1.trackedEntityAttributes[i].displayName +"</th>";
+          row = row + "<th class='rows' id='"+ data1.programTrackedEntityAttributes[i].id +"'>"+ data1.programTrackedEntityAttributes[i].displayName +"</th>";
         }
         //console.log(keyMap);
         //console.log(keyMap2);
-        var hr = "<tr><th colspan='"+(data1.trackedEntityAttributes.length)+"'>Attributes</th>";
+        var hr = "<tr><th colspan='"+(data1.programTrackedEntityAttributes.length)+"'>Attributes</th>";
         getRows(row,hr,program,index);
         //console.log(keyMapp);
         //var index = 0;
