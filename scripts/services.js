@@ -59,6 +59,19 @@ var trackerReportsAppServices = angular.module('trackerReportsAppServices', [])
                    }
                });
                return def;
+           },
+           getProgramStages : function(id){
+               var def = $.Deferred();
+               $.ajax({
+                   type: "GET",
+                   dataType: "json",
+                   contentType: "application/json",
+                   url: "../../programs/"+ id +".json?fields=programStages[id,name]",
+                   success: function (data) {
+                       def.resolve(data);
+                   }
+               });
+               return def;
            }
 
        }
