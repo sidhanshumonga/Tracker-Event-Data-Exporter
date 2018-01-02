@@ -1,6 +1,9 @@
 
 self.addEventListener('message',function(e){
-
+  if(e.data == 'start'){
+    post.message(console.log('worker started'));
+  }
+  else{
   var data = JSON.stringify(e.data);
   var req = new XMLHttpRequest();
 
@@ -14,6 +17,6 @@ self.addEventListener('message',function(e){
   req.send();
   var string = req.response + "&&&" + e.data;
   self.postMessage(string);
-
+}
 
 },false);

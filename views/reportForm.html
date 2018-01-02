@@ -132,7 +132,7 @@
         left:45%;
       }
 </style>
-<div class="loading" id="loader">Loading&#8230;<p id="perc">{{perc}} %</p>
+<div class="loading" id="loader">&#8230;
 </div>
 
 
@@ -189,7 +189,7 @@
         <button id="btnExport" class="btn btn-primary" ng-click="fnExcelReport();" ng-disabled="!selectedProgram"> Export To Excel </button>
     </div>
         <div class="col-md-6 trim">
-            <button id="btnExportData" class="btn btn-primary" ng-click="exportData(selectedProgram);" ng-disabled="!selectedProgram"> Export to JSON </button>
+            <button id="btnExportData" class="btn btn-primary" ng-click="downloadJson()" ng-disabled="!selectedProgram"> Export to JSON </button>
         </div>
 
 </div>
