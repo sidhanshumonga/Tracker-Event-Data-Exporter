@@ -300,6 +300,19 @@ msfReportsApp
                }
            });
         };
+
+        var printReport =  function(finalKeyMap, newRow){
+          for(var h=1,arrLen3 = keyMap2.length;h<arrLen3;h++){
+            if(finalKeyMap.hasOwnProperty(h) && finalKeyMap[h] != null){
+              newRow =  newRow + "<td>"+finalKeyMap[h]+"</td>";
+            }
+            else{
+              newRow =  newRow + "<td></td>";
+            }
+          }
+          $('.reporttable').append(newRow + "</tr>");
+        };
+
       //  getOptionName();
         var terminateWork = false;
         var getDataValues =  function(keyMap,program){
@@ -310,29 +323,37 @@ msfReportsApp
                w6flag = true;
              }
               $.each(enrollmentsArr,function(g,value){
-                var tempMap = [];
+
                 tei = enrollmentsArr[g];
                 var myWorker5 = new Worker('worker.js');
                 var url2 = '../../trackedEntityInstances/'+ tei +'.json?fields=*';
                 var w5flag = false;
+                var tempMap = [];
+                console.log(url2);
                 myWorker5.postMessage(url2);
                 myWorker5.addEventListener('message',function(response){
+                  tempMap = [];
                   var res2 = (response.data).split('&&&');
                   if(url2 != res2[1]){return}
                      var obj = jQuery.parseJSON(res2[0]);
                      var data = obj;
+                     console.log(data);
                      $.each(data.attributes,function(e,values){
                                                 var count = keyMap[data.attributes[e].attribute];
                                                 var value = data.attributes[e].value;
                                                 if(value == "true"){value = "Yes"}
                                                 if(value == "false"){value  = "No"}
+                                                if(value == null || value == "null"){value = ""}
                                                 tempMap[count] = value;
                   });
-                  console.log(tempMap);
                   w5flag =  true;
-
+                  if(w5flag){
+                      myWorker5.terminate();
+                  }
+                  });
                     var myWorker6 = new Worker('worker.js');
                     var url3 = '../../events.json?trackedEntityInstance='+tei+'&order=eventDate:ASC';
+                    console.log(url3);
                     myWorker6.postMessage(url3);
                     myWorker6.addEventListener('message',function(response){
 
@@ -343,9 +364,9 @@ msfReportsApp
 
                     $.each(data5.events,function(m,values){
                       var finalKeyMap = [];
-                      console.log(tempMap);
-                      finalKeyMap = tempMap;
-                      console.log(finalKeyMap);
+                      //finalKeyMap = tempMap;
+                      finalKeyMap = JSON.parse(JSON.stringify(tempMap));
+                      //console.log(finalKeyMap);
                       var pidd = data5.events[m].programStage;
                       finalKeyMap[1] = psArray[pidd];
                       finalKeyMap[2] = (data5.events[m].eventDate).split('T')[0];
@@ -354,28 +375,19 @@ msfReportsApp
                       if(finalKeyMap[1] == "Follow-up Visit"){var newRow = "<tr>";}
                       if(finalKeyMap[1] == "Exit"){var newRow = "<tr style='background-color:#95a3ba'>";}
 
-                      $.each(data5.events[m].dataValues,function(n,values){
+                      for(var n = 0,arr=data5.events[m].dataValues.length;n<arr;n++){
                         var value = data5.events[m].dataValues[n].value;
-                        if(value == "true"){value = "Yes"}
-                        if(value == "false"){value  = "No"}
+                        if(value == 'true'){value = "Yes"}
+                        if(value == 'false'){value = "No"}
                         var optionValue = optionSetArr[value];
                         if(typeof optionValue === undefined || optionValue === undefined){}
                         else{var value = optionValue;}
                         var count2 = keyMap[pidd +'+'+ data5.events[m].dataValues[n].dataElement];
                         finalKeyMap[count2] = value;
-                      });
-
-
-                      for(var h=1,arrLen3 = keyMap2.length;h<arrLen3;h++){
-                        if(finalKeyMap.hasOwnProperty(h)){
-                          newRow =  newRow + "<td>"+finalKeyMap[h]+"</td>";
-                        }
-                        else{
-                          newRow =  newRow + "<td></td>";
-                        }
                       }
-                      console.log(finalKeyMap);
-                      $('.reporttable').append(newRow + "</tr>");
+
+                      printReport(finalKeyMap, newRow);
+
                     });
                     w6flag = true;
                     if(w6flag){
@@ -388,10 +400,7 @@ msfReportsApp
                             document.getElementById('loader').style.display = "none";
                     }
                 });
-                if(w5flag){
-                    myWorker5.terminate();
-                }
-                });
+
 
           });
           if(w6flag){
