@@ -369,12 +369,13 @@ msfReportsApp
                       //console.log(finalKeyMap);
                       var pidd = data5.events[m].programStage;
                       finalKeyMap[1] = psArray[pidd];
-                      finalKeyMap[2] = (data5.events[m].eventDate).split('T')[0];
+                      if(data5.events[m].eventDate === undefined || typeof data5.events[m].eventDate === undefined){finalKeyMap[2] == ""}
+                      else{finalKeyMap[2] = (data5.events[m].eventDate).split('T')[0];}
                       finalKeyMap[3] = data5.events[m].orgUnitName;
                       if(finalKeyMap[1] == "First Visit"){var newRow = "<tr style='background-color:#abbedf'>";}
-                      if(finalKeyMap[1] == "Follow-up Visit"){var newRow = "<tr>";}
-                      if(finalKeyMap[1] == "Exit"){var newRow = "<tr style='background-color:#95a3ba'>";}
-
+                      else if(finalKeyMap[1] == "Follow-up Visit"){var newRow = "<tr>";}
+                      else if(finalKeyMap[1] == "Exit"){var newRow = "<tr style='background-color:#95a3ba'>";}
+                      else{var newRow = "<tr>";}
                       for(var n = 0,arr=data5.events[m].dataValues.length;n<arr;n++){
                         var value = data5.events[m].dataValues[n].value;
                         if(value == 'true'){value = "Yes"}
