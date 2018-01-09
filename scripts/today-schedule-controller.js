@@ -76,6 +76,7 @@ msfReportsApp
         var psArray = [];
 
         $scope.loadProgramStages = function(response){
+          psArray = [];
             for(var i=0;i<response.programStages.length;i++){
               psArray[response.programStages[i].id] = response.programStages[i].name;
             }
@@ -352,7 +353,7 @@ msfReportsApp
                   }
                   });
                     var myWorker6 = new Worker('worker.js');
-                    var url3 = '../../events.json?trackedEntityInstance='+tei+'&order=eventDate:ASC';
+                    var url3 = '../../events.json?trackedEntityInstance='+tei+'&program='+ program.id +'&order=eventDate:ASC&skipPaging=true';
                     console.log(url3);
                     myWorker6.postMessage(url3);
                     myWorker6.addEventListener('message',function(response){
