@@ -324,7 +324,7 @@ msfReportsApp
                w6flag = true;
              }
               $.each(enrollmentsArr,function(g,value){
-
+                    tempMap = [];
                 tei = enrollmentsArr[g];
                 var myWorker5 = new Worker('worker.js');
                 var url2 = '../../trackedEntityInstances/'+ tei +'.json?fields=*';
@@ -333,7 +333,7 @@ msfReportsApp
                 console.log(url2);
                 myWorker5.postMessage(url2);
                 myWorker5.addEventListener('message',function(response){
-                  tempMap = [];
+
                   var res2 = (response.data).split('&&&');
                   if(url2 != res2[1]){return}
                      var obj = jQuery.parseJSON(res2[0]);
