@@ -162,7 +162,7 @@ msfReportsApp
           });
 
           var myWorkerJson1 = new Worker('worker.js');
-          var url1 = '../../enrollments.json?ou='+$scope.selectedOrgUnit.id+'&program='+ program.id + '&programStartDate='+ $scope.startdateSelected +'&programEndDate='+ $scope.enddateSelected +'&skipPaging=true';
+          var url1 = '../../enrollments.json?ou='+$scope.selectedOrgUnit.id+'&ouMode=DESCENDANTS&program='+ program.id + '&programStartDate='+ $scope.startdateSelected +'&programEndDate='+ $scope.enddateSelected +'&skipPaging=true';
           myWorkerJson1.postMessage(url1);
           myWorkerJson1.addEventListener('message',function(response1){
             var res = (response1.data).split('&&&');
@@ -261,7 +261,7 @@ msfReportsApp
         var getEnrollments = function(id){
           var w3flag = false;
           var myWorker3 = new Worker('worker.js');
-          var url = '../../enrollments.json?ou='+$scope.selectedOrgUnit.id+'&program='+ id +'&programStartDate='+ $scope.startdateSelected +'&programEndDate='+ $scope.enddateSelected +'&fields=trackedEntityInstance&skipPaging=true';
+          var url = '../../enrollments.json?ou='+$scope.selectedOrgUnit.id+'&ouMode=DESCENDANTS&program='+ id +'&programStartDate='+ $scope.startdateSelected +'&programEndDate='+ $scope.enddateSelected +'&fields=trackedEntityInstance&skipPaging=true';
           myWorker3.postMessage(url);
           myWorker3.addEventListener('message',function(response){
             var res = (response.data).split('&&&');
