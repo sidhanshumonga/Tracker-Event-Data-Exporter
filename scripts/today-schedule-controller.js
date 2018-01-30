@@ -294,7 +294,7 @@ msfReportsApp
                    }
                  }
                }
-               console.log(optionSetArr);
+              // console.log(optionSetArr);
                w4flag = true;
                if(w4flag){
                    myWorker4.terminate();
@@ -330,7 +330,7 @@ msfReportsApp
                 var url2 = '../../trackedEntityInstances/'+ tei +'.json?fields=*';
                 var w5flag = false;
                 var tempMap = [];
-                console.log(url2);
+               // console.log(url2);
                 myWorker5.postMessage(url2);
                 myWorker5.addEventListener('message',function(response){
 
@@ -338,7 +338,7 @@ msfReportsApp
                   if(url2 != res2[1]){return}
                      var obj = jQuery.parseJSON(res2[0]);
                      var data = obj;
-                     console.log(data);
+                   //  console.log(data);
                      $.each(data.attributes,function(e,values){
                                                 var count = keyMap[data.attributes[e].attribute];
                                                 var value = data.attributes[e].value;
@@ -354,7 +354,7 @@ msfReportsApp
                   });
                     var myWorker6 = new Worker('worker.js');
                     var url3 = '../../events.json?trackedEntityInstance='+tei+'&program='+ program.id +'&order=eventDate:ASC&skipPaging=true';
-                    console.log(url3);
+                   // console.log(url3);
                     myWorker6.postMessage(url3);
                     myWorker6.addEventListener('message',function(response){
 
