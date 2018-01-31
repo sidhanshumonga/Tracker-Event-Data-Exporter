@@ -261,8 +261,8 @@ msfReportsApp
     var pagingFlag = false;
     var page = 1;
     var enrollmentsArr = [];
-   // var totalPages;
-    var getEnrollments = function (keyMap,program) {
+    // var totalPages;
+    var getEnrollments = function (keyMap, program) {
       var w3flag = false;
       if (pagingFlag) {
         page++;
@@ -327,12 +327,27 @@ msfReportsApp
     };
 
     //  getOptionName();
+    var teiArray = [];
+    var allTeiData = function (program) {
 
+
+      $.ajax({
+        async: false,
+        url: "../../trackedEntityInstances.json?ou=" + $scope.selectedOrgUnit.id + "&ouMode=DESCENDANTS&program=" + program.id + "&skipPaging=true",
+        success: function (result) {
+          var teidata = result.trackedEntityInstances;
+          for (var i = 0, len = teidata.length; i < len; i++) {
+            teiArray[teidata[i].trackedEntityInstance] = teidata[i].attributes;
+          }
+        }
+
+      });
+    };
 
     var getTeiData = function (eventsAtrr) {
       var temprMap = [];
-      for (var r = 0, lenn = eventsAtrr.attributes.length; r < lenn; r++) {
-        var valuess = eventsAtrr.attributes[r];
+      for (var r = 0, lenn = eventsAtrr.length; r < lenn; r++) {
+        var valuess = eventsAtrr[r];
         var count = keyMap[valuess.attribute];
         var value = valuess.value;
         if (value == "true") { value = "Yes" }
@@ -358,49 +373,54 @@ msfReportsApp
       var pageIndex = 0;
 
       enrollmentsArr.forEach(function (element) {
-       //tempMap = [];
+        //tempMap = [];
         tei = element;
-        var myWorker9 = new Worker('worker.js');
-        var url2 = '../../trackedEntityInstances/' + tei + '.json?fields=*';
-        var w5flag = false;
+        var tempMap = [];
+
+        tempMap = getTeiData(teiArray[tei]);
+        // var myWorker9 = new Worker('worker.js');
+        // var url2 = '../../trackedEntityInstances/' + tei + '.json?fields=*';
+        // var w5flag = false;
 
         // console.log(url2);
-        var tempMap = [];
-        myWorker9.postMessage(url2);
-        myWorker9.addEventListener('message', function (response) {
 
-          var res2 = (response.data).split('&&&');
-          if (url2 != res2[1]) { return }
-          var obj = jQuery.parseJSON(res2[0]);
-          teiResponse = obj;
-          //  console.log(data);
+        // myWorker9.postMessage(url2);
+        // myWorker9.addEventListener('message', function (response) {
+
+        //   var res2 = (response.data).split('&&&');
+        //   if (url2 != res2[1]) { return }
+        //   var obj = jQuery.parseJSON(res2[0]);
+        //   teiResponse = obj;
+        //   //  console.log(data);
 
 
-          tempMap = getTeiData(teiResponse);
+        //   tempMap = getTeiData(teiResponse);
 
-          w5flag = true;
-          if (w5flag) {
-            myWorker9.terminate();
-          }
-        });
+        //   w5flag = true;
+        //   if (w5flag) {
+        //     myWorker9.terminate();
+        //   }
+        // });
+        var emptyRows = 0;
         var myWorker6 = new Worker('worker.js');
         var url3 = '../../events.json?trackedEntityInstance=' + tei + '&program=' + program.id + '&order=eventDate:ASC&skipPaging=true';
         // console.log(url3);
         myWorker6.postMessage(url3);
         myWorker6.addEventListener('message', function (response) {
-          
+
 
           var res3 = (response.data).split('&&&');
           if (url3 != res3[1]) { return }
           var obj5 = jQuery.parseJSON(res3[0]);
           var data5 = obj5;
           pageIndex++;
-          
+
           data5.events.forEach(function (eventElement) {
             var finalKeyMap = [];
             //finalKeyMap = tempMap;
             if (tempMap[4] === undefined) {
               console.log("empty row found!");
+              emptyRows++;
               tempMap = getTeiData(teiResponse);
             }
             finalKeyMap = JSON.parse(JSON.stringify(tempMap));
@@ -442,16 +462,16 @@ msfReportsApp
 
             //  document.getElementById('loader').style.display = "none";
           }
-          if(pageIndex == 50){
+          if (pageIndex == 50) {
             pagingFlag = true;
             oldIndex = oldIndex + pageIndex;
             getEnrollments(keyMap, program);
           }
-          if ((oldIndex + pageIndex) == totalEnrollments - 1) {
+          if ((oldIndex + pageIndex + emptyRows) >= totalEnrollments - 1) {
             terminateWork = true;
             document.getElementById('loader').style.display = "none";
           }
-          
+
         });
 
 
@@ -509,7 +529,7 @@ msfReportsApp
       // flagCount = "";
       // programid =  "";
       programid = program.id;
-      // getEnrollments(program.id);
+      allTeiData(program);
       $scope.exportDataJson(program);
       var w1flag = false;
       document.getElementById('loader').style.display = "block";
