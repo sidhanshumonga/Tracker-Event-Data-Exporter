@@ -304,6 +304,7 @@ msfReportsApp
 
         var printReport =  function(finalKeyMap, newRow){
           for(var h=1,arrLen3 = keyMap2.length;h<arrLen3;h++){
+            //console.log(finalKeyMap[4])
             if(finalKeyMap.hasOwnProperty(h) && finalKeyMap[h] != null){
               newRow =  newRow + "<td>"+finalKeyMap[h]+"</td>";
             }
@@ -315,6 +316,23 @@ msfReportsApp
         };
 
       //  getOptionName();
+
+
+        var getTeiData = function(eventsAtrr){
+          var temprMap = [];
+          for (var r = 0, lenn = eventsAtrr.attributes.length; r < lenn ; r++){
+            var valuess = eventsAtrr.attributes[r];
+                                    var count = keyMap[valuess.attribute];
+                                    var value = valuess.value;
+                                    if(value == "true"){value = "Yes"}
+                                    if(value == "false"){value  = "No"}
+                                    if(value == null || value == "null"){value = ""}
+                                    temprMap[count] = value;
+      }
+      return JSON.parse(JSON.stringify(temprMap));;
+        };
+
+        var teiResponse;
         var terminateWork = false;
         var getDataValues =  function(keyMap,program){
           var tei= "";
@@ -323,33 +341,31 @@ msfReportsApp
              if(enrollmentsArr.length == 0){
                w6flag = true;
              }
-              $.each(enrollmentsArr,function(g,value){
+             var g = 0;
+              enrollmentsArr.forEach(function(element){
                     tempMap = [];
-                tei = enrollmentsArr[g];
+                tei = element;
                 var myWorker5 = new Worker('worker.js');
                 var url2 = '../../trackedEntityInstances/'+ tei +'.json?fields=*';
                 var w5flag = false;
-                var tempMap = [];
+                
                // console.log(url2);
+               var tempMap = [];
                 myWorker5.postMessage(url2);
                 myWorker5.addEventListener('message',function(response){
 
                   var res2 = (response.data).split('&&&');
                   if(url2 != res2[1]){return}
                      var obj = jQuery.parseJSON(res2[0]);
-                     var data = obj;
+                     teiResponse = obj;
                    //  console.log(data);
-                     $.each(data.attributes,function(e,values){
-                                                var count = keyMap[data.attributes[e].attribute];
-                                                var value = data.attributes[e].value;
-                                                if(value == "true"){value = "Yes"}
-                                                if(value == "false"){value  = "No"}
-                                                if(value == null || value == "null"){value = ""}
-                                                tempMap[count] = value;
-                  });
+                  
+
+                   tempMap = getTeiData(teiResponse);
+                   
                   w5flag =  true;
                   if(w5flag){
-                      myWorker5.terminate();
+                     
                   }
                   });
                     var myWorker6 = new Worker('worker.js');
@@ -362,37 +378,40 @@ msfReportsApp
                     if(url3 != res3[1]){return}
                        var obj5 = jQuery.parseJSON(res3[0]);
                        var data5 = obj5;
-
-                    $.each(data5.events,function(m,values){
+                      g++;
+                    data5.events.forEach(function(eventElement){
                       var finalKeyMap = [];
                       //finalKeyMap = tempMap;
+                      if(tempMap[4] === undefined){
+                          console.log("empty row found!");
+                        tempMap = getTeiData(teiResponse);}
                       finalKeyMap = JSON.parse(JSON.stringify(tempMap));
                       //console.log(finalKeyMap);
-                      var pidd = data5.events[m].programStage;
+                      var pidd = eventElement.programStage;
                       finalKeyMap[1] = psArray[pidd];
-                      if(data5.events[m].eventDate === undefined || typeof data5.events[m].eventDate === undefined){finalKeyMap[2] == ""}
-                      else{finalKeyMap[2] = (data5.events[m].eventDate).split('T')[0];}
-                      finalKeyMap[3] = data5.events[m].orgUnitName;
+                      if(eventElement.eventDate === undefined || typeof eventElement.eventDate === undefined){finalKeyMap[2] == ""}
+                      else{finalKeyMap[2] = (eventElement.eventDate).split('T')[0];}
+                      finalKeyMap[3] = eventElement.orgUnitName;
                       
                       if(finalKeyMap[1] == "First Visit"){var newRow = "<tr style='background-color:#abbedf'>";}
                       else if(finalKeyMap[1] == "Follow-up Visit"){var newRow = "<tr>";}
                       else if(finalKeyMap[1] == "Exit"){var newRow = "<tr style='background-color:#95a3ba'>";}
                       else{
-                        if(m == 0){
+                        if(finalKeyMap[1] == program.programStages[0].id){
                           var newRow = "<tr style='background-color:#95a3ba'>";
                         }
                         else{
                           var newRow = "<tr>";
                         }
                       }
-                      for(var n = 0,arr=data5.events[m].dataValues.length;n<arr;n++){
-                        var value = data5.events[m].dataValues[n].value;
+                      for(var n = 0,arr=eventElement.dataValues.length;n<arr;n++){
+                        var value = eventElement.dataValues[n].value;
                         if(value == 'true'){value = "Yes"}
                         if(value == 'false'){value = "No"}
                         var optionValue = optionSetArr[value];
                         if(typeof optionValue === undefined || optionValue === undefined){}
                         else{var value = optionValue;}
-                        var count2 = keyMap[pidd +'+'+ data5.events[m].dataValues[n].dataElement];
+                        var count2 = keyMap[pidd +'+'+ eventElement.dataValues[n].dataElement];
                         finalKeyMap[count2] = value;
                       }
 
@@ -402,10 +421,10 @@ msfReportsApp
                     w6flag = true;
                     if(w6flag){
                         myWorker6.terminate();
+                        myWorker5.terminate();
                         //  document.getElementById('loader').style.display = "none";
                     }
                     if(g == enrollmentsArr.length-1){
-
                           terminateWork = true;
                             document.getElementById('loader').style.display = "none";
                     }
