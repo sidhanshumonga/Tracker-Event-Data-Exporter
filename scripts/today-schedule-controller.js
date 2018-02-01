@@ -377,7 +377,11 @@ msfReportsApp
         tei = element;
         var tempMap = [];
 
-        tempMap = getTeiData(teiArray[tei]);
+        var teiattr = teiArray[tei];
+        if(teiattr === undefined){}
+        else{
+          tempMap = getTeiData(teiattr);
+        }
         // var myWorker9 = new Worker('worker.js');
         // var url2 = '../../trackedEntityInstances/' + tei + '.json?fields=*';
         // var w5flag = false;
