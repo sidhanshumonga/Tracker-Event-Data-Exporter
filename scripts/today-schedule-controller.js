@@ -80,6 +80,11 @@ msfReportsApp
       for (var i = 0; i < response.programStages.length; i++) {
         psArray[response.programStages[i].id] = response.programStages[i].name;
       }
+      $scope.program = response;
+      document.getElementById('loader').style.display = "block";
+      document.getElementById('loaderdata').style.display = "Please wait, loading data!";
+      getOptionName();
+      getOptionName2();
     };
 
     $scope.updateStartDate = function (startdate) {
@@ -288,6 +293,8 @@ msfReportsApp
         }
       });
     };
+
+    var teiArray = [];
     var getOptionName = function () {
       var w4flag = false;
       var myWorker4 = new Worker('worker.js');
@@ -309,8 +316,39 @@ msfReportsApp
         w4flag = true;
         if (w4flag) {
           myWorker4.terminate();
+        //  document.getElementById('loader').style.display = "block";
+          allTeiData();
         }
       });
+
+    };
+
+    var getOptionName2 = function () {
+      var w44flag = false;
+      var myWorker44 = new Worker('worker.js');
+      var url = '../../trackedEntityAttributes.json?fields=id,optionSetValue,optionSet[options[name,code]]&paging=none';
+      myWorker44.postMessage(url);
+      myWorker44.addEventListener('message', function (response) {
+        var res = (response.data).split('&&&');
+        if (url != res[1]) { return }
+        var obj = jQuery.parseJSON(res[0]);
+        var data = obj;
+        for (var y = 0, arrL = data.trackedEntityAttributes.length; y < arrL; y++) {
+          if (data.trackedEntityAttributes[y].optionSetValue == true) {
+            for (var x = 0, arrLn = data.trackedEntityAttributes[y].optionSet.options.length; x < arrLn; x++) {
+              optionSetArr[data.trackedEntityAttributes[y].optionSet.options[x].code] = data.trackedEntityAttributes[y].optionSet.options[x].name;
+            }
+          }
+        }
+        // console.log(optionSetArr);
+        w44flag = true;
+        if (w44flag) {
+          myWorker44.terminate();
+        //  document.getElementById('loader').style.display = "block";
+          allTeiData();
+        }
+      });
+
     };
 
     var printReport = function (finalKeyMap, newRow) {
@@ -326,22 +364,31 @@ msfReportsApp
       $('.reporttable').append(newRow + "</tr>");
     };
 
-    //  getOptionName();
-    var teiArray = [];
-    var allTeiData = function (program) {
 
 
-      $.ajax({
-        async: false,
-        url: "../../trackedEntityInstances.json?ou=" + $scope.selectedOrgUnit.id + "&ouMode=DESCENDANTS&program=" + program.id + "&skipPaging=true",
-        success: function (result) {
-          var teidata = result.trackedEntityInstances;
-          for (var i = 0, len = teidata.length; i < len; i++) {
-            teiArray[teidata[i].trackedEntityInstance] = teidata[i].attributes;
-          }
+    var allTeiData = function () {
+      var w0flag = false;
+      var myWorker0 = new Worker('worker.js');
+      var url = "../../trackedEntityInstances.json?ou=" + $scope.selectedOrgUnit.id + "&ouMode=DESCENDANTS&program=" + $scope.program.id + "&skipPaging=true";
+      myWorker0.postMessage(url);
+      myWorker0.addEventListener('message', function (response) {
+        var res = (response.data).split('&&&');
+        if (url != res[1]) { return }
+        var obj0 = jQuery.parseJSON(res[0]);
+        var result = obj0;
+        var teidata = result.trackedEntityInstances;
+        for (var i = 0, len = teidata.length; i < len; i++) {
+          teiArray[teidata[i].trackedEntityInstance] = teidata[i].attributes;
         }
-
+        // console.log(optionSetArr);
+        w0flag = true;
+        if (w0flag) {
+          myWorker0.terminate();
+          document.getElementById('loader').style.display = "none";
+          document.getElementById('loaderdata').style.display = "none";
+        }
       });
+
     };
 
     var getTeiData = function (eventsAtrr) {
@@ -350,9 +397,9 @@ msfReportsApp
         var valuess = eventsAtrr[r];
         var count = keyMap[valuess.attribute];
         var value = valuess.value;
-        if (value == "true") { value = "Yes" }
-        if (value == "false") { value = "No" }
-        if (value == null || value == "null") { value = "" }
+        var optionValue = optionSetArr[value];
+        if (typeof optionValue === undefined || optionValue === undefined) { }
+        else { var value = optionValue; }
         temprMap[count] = value;
       }
       return JSON.parse(JSON.stringify(temprMap));;
@@ -378,8 +425,8 @@ msfReportsApp
         var tempMap = [];
 
         var teiattr = teiArray[tei];
-        if(teiattr === undefined){}
-        else{
+        if (teiattr === undefined) { }
+        else {
           tempMap = getTeiData(teiattr);
         }
         // var myWorker9 = new Worker('worker.js');
@@ -439,8 +486,8 @@ msfReportsApp
             else if (finalKeyMap[1] == "Follow-up Visit") { var newRow = "<tr>"; }
             else if (finalKeyMap[1] == "Exit") { var newRow = "<tr style='background-color:#95a3ba'>"; }
             else {
-              if (finalKeyMap[1] == program.programStages[0].id) {
-                var newRow = "<tr style='background-color:#95a3ba'>";
+              if (finalKeyMap[1] == program.programStages[0].name) {
+                var newRow = "<tr style='background-color:#e1f8ff'>";
               }
               else {
                 var newRow = "<tr>";
@@ -533,13 +580,13 @@ msfReportsApp
       // flagCount = "";
       // programid =  "";
       programid = program.id;
-      allTeiData(program);
+
+      // allTeiData(program);
       $scope.exportDataJson(program);
       var w1flag = false;
       document.getElementById('loader').style.display = "block";
 
       var myWorker1 = new Worker('worker.js');
-      getOptionName();
       $(".reporttable tbody").remove();
       $(".reporttable tbody").detach();
       var row = "<tr><th>Event Name</th><th>Event Date</th><th>Orgunit</th>";
