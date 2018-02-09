@@ -82,7 +82,7 @@ msfReportsApp
       }
       $scope.program = response;
       document.getElementById('loader').style.display = "block";
-      document.getElementById('loaderdata').style.display = "Please wait, loading data!";
+      document.getElementById('loaderdata').innerHTML = "Please wait, loading data!";
       getOptionName();
       getOptionName2();
     };
