@@ -572,7 +572,9 @@ msfReportsApp
       });
     };
     var flagg = 0;
+    $scope.isDisabled = true;
     $scope.generateReport = function (program) {
+      $scope.isDisabled = false;
       keyMap = [];
       keyMap2 = [];
       //json = "";
@@ -618,6 +620,9 @@ msfReportsApp
       }, false);
 
     };
+
+    
+    
 
 
 
