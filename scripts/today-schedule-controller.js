@@ -136,9 +136,9 @@ msfReportsApp
         var data = obj;
         jsonData.events = obj.events;
         for (var j = 0, arr = obj.events.length; j < arr; j++) {
-          cEventsTei[obj.events.trackedEntityInstance] = true;
-          teisTobeAdded.push(obj.events.trackedEntityInstance);
-          cEventsId[obj.events.event] = true;
+          cEventsTei[obj.events[j].trackedEntityInstance] = true;
+          teisTobeAdded.push(obj.events[j].trackedEntityInstance);
+          cEventsId[obj.events[j].event] = true;
         }
         if (mwflag4) {
           myWorkerJson5.terminate();
@@ -156,10 +156,10 @@ msfReportsApp
         var data = obj;
 
         for (var j = 0, arr = obj.events.length; j < arr; j++) {
-          if (!cEventsId[obj.events.event] || typeof cEventsId[obj.events.event] === undefined || cEventsId[obj.events.event] === undefined) {
+          if (!cEventsId[obj.events[j].event] || typeof cEventsId[obj.events[j].event] === undefined || cEventsId[obj.events[j].event] === undefined) {
             jsonData.events.push(obj.events[j]);
-            teisTobeAdded.push(obj.events.trackedEntityInstance);
-            cEventsTei[obj.events.trackedEntityInstance] = true;
+            teisTobeAdded.push(obj.events[j].trackedEntityInstance);
+            cEventsTei[obj.events[j].trackedEntityInstance] = true;
           }
         }
         if (mwflag3) {
