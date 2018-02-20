@@ -196,6 +196,7 @@ msfReportsApp
         if (mwflag3) {
           myWorkerJson4.terminate();
           mapRemainingTei(teisTobeAdded, teiArr);
+      document.getElementById('btnExportData').disabled = true;
         }
       });
 
