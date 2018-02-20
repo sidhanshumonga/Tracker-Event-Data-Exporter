@@ -192,7 +192,7 @@ msfReportsApp
         var data = obj;
         jsonData.trackedEntityInstances = obj.trackedEntityInstances;
         for (var i = 0, arr = obj.trackedEntityInstances.length; i < arr; i++) {
-          teiArr[obj.trackedEntityInstances.trackedEntityInstance] = true;
+          teiArr[obj.trackedEntityInstances[i].trackedEntityInstance] = true;
         }
         if (mwflag1) {
           myWorkerJson2.terminate();
