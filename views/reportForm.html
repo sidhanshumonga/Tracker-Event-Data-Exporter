@@ -196,10 +196,10 @@
             <button type="button" class="btn btn-primary" ng-click="generateReport(selectedProgram, report, selectedOuMode);showLoad();" ng-disabled="!selectedProgram">{{'generate_report'| translate}}</button>
         </div>
         <div class="col-md-6 trim">
-        <button id="btnExport" class="btn btn-primary" ng-click="fnExcelReport();" ng-disabled="!selectedProgram"> Export To Excel </button>
+        <button id="btnExport" class="btn btn-primary" ng-click="fnExcelReport();" ng-disabled="isDisabled"> Export To Excel </button>
     </div>
         <div class="col-md-6 trim">
-            <button id="btnExportData" class="btn btn-primary" ng-click="downloadJson()" ng-disabled="!selectedProgram"> Export to JSON </button>
+            <button id="btnExportData" class="btn btn-primary" ng-click="downloadJson()" ng-disabled="isDisabled"> Export to JSON </button>
         </div>
 
 </div>

@@ -116,14 +116,42 @@ msfReportsApp
       events: []
     };
 
+    var gettei = function(tei){
+      var mwflag7 = false;
+      var data = "";
+      $.ajax({
+        async: false,
+        type: "GET",
+        url: "../../trackedEntityInstances/" + tei + ".json?&skipPaging=true",
+        success: function (response) {
+          data = response;
+        }
+       
+      });
+     
+        return data;
+    };
+
+    var mapRemainingTei = function(teisTobeAdded, teiArr){
+      for (var t = 0, arr = teisTobeAdded.length; t < arr; t++) {
+        var value = teiArr[teisTobeAdded[t]];
+        if (!value || typeof value === undefined || value === undefined) {
+         var obj = gettei(teisTobeAdded[t]);
+         jsonData.trackedEntityInstances.push(obj);
+        }
+      }
+    };
+
     var totalEnrollments = 0;
 
     $scope.exportDataJson = function (program) {
-      var mwflag1 = false, mwflag2 = false, mwflag3 = false, mwflag4 = false, mwflag7 = false;
+      var mwflag1 = false, mwflag2 = false, mwflag3 = false, mwflag4 = false;
       var teiArr = [];
       var cEventsTei = [];
       var cEventsId = [];
       var teisTobeAdded = [];
+      document.getElementById('btnExportData').disabled = true;
+      document.getElementById('loader').style.display = "block";
 
 
       var myWorkerJson5 = new Worker('worker.js');
@@ -136,12 +164,14 @@ msfReportsApp
         var data = obj;
         jsonData.events = obj.events;
         for (var j = 0, arr = obj.events.length; j < arr; j++) {
-          cEventsTei[obj.events.trackedEntityInstance] = true;
-          teisTobeAdded.push(obj.events.trackedEntityInstance);
-          cEventsId[obj.events.event] = true;
+          cEventsTei[obj.events[j].trackedEntityInstance] = true;
+          teisTobeAdded.push(obj.events[j].trackedEntityInstance);
+          cEventsId[obj.events[j].event] = true;
         }
+        mwflag4 = true;
         if (mwflag4) {
           myWorkerJson5.terminate();
+          mapRemainingTei(teisTobeAdded, teiArr);
         }
       });
 
@@ -156,14 +186,16 @@ msfReportsApp
         var data = obj;
 
         for (var j = 0, arr = obj.events.length; j < arr; j++) {
-          if (!cEventsId[obj.events.event] || typeof cEventsId[obj.events.event] === undefined || cEventsId[obj.events.event] === undefined) {
+          if (!cEventsId[obj.events[j].event] || typeof cEventsId[obj.events[j].event] === undefined || cEventsId[obj.events[j].event] === undefined) {
             jsonData.events.push(obj.events[j]);
-            teisTobeAdded.push(obj.events.trackedEntityInstance);
-            cEventsTei[obj.events.trackedEntityInstance] = true;
+            teisTobeAdded.push(obj.events[j].trackedEntityInstance);
+            cEventsTei[obj.events[j].trackedEntityInstance] = true;
           }
         }
+        mwflag3 = true;
         if (mwflag3) {
           myWorkerJson4.terminate();
+          mapRemainingTei(teisTobeAdded, teiArr);
         }
       });
 
@@ -177,6 +209,7 @@ msfReportsApp
         var data = obj;
         totalEnrollments = data.enrollments.length;
         jsonData.enrollments = data.enrollments;
+        mwflag2 = true;
         if (mwflag2) {
           myWorkerJson1.terminate();
         }
@@ -192,32 +225,13 @@ msfReportsApp
         var data = obj;
         jsonData.trackedEntityInstances = obj.trackedEntityInstances;
         for (var i = 0, arr = obj.trackedEntityInstances.length; i < arr; i++) {
-          teiArr[obj.trackedEntityInstances.trackedEntityInstance] = true;
+          teiArr[obj.trackedEntityInstances[i].trackedEntityInstance] = true;
         }
+        mwflag1 = true;
         if (mwflag1) {
           myWorkerJson2.terminate();
         }
       });
-      for (var t = 0, arr = teisTobeAdded.length; t < arr; t++) {
-        var value = teiArr[teisTobeAdded[t]];
-        if (!value || typeof value === undefined || value === undefined) {
-
-          var myWorkerJson7 = new Worker('worker.js');
-          var url7 = '../../trackedEntityInstances/' + value + '.json?&skipPaging=true';
-          myWorkerJson7.postMessage(url2);
-          myWorkerJson7.addEventListener('message', function (response7) {
-            var res = (response7.data).split('&&&');
-            if (url7 != res[1]) { return }
-            var obj = jQuery.parseJSON(res[0]);
-            var data = obj;
-            jsonData.trackedEntityInstances.push(obj);
-            if (mwflag7) {
-              myWorkerJson7.terminate();
-            }
-          });
-
-        }
-      }
     };
 
     $scope.downloadJson = function () {
@@ -576,7 +590,9 @@ else{var value = valuess.value;}
       });
     };
     var flagg = 0;
+    $scope.isDisabled = true;
     $scope.generateReport = function (program) {
+      $scope.isDisabled = false;
       keyMap = [];
       keyMap2 = [];
       //json = "";
@@ -622,6 +638,9 @@ else{var value = valuess.value;}
       }, false);
 
     };
+
+    
+    
 
 
 
