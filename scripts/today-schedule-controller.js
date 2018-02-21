@@ -136,6 +136,7 @@ msfReportsApp
       for (var t = 0, arr = teisTobeAdded.length; t < arr; t++) {
         var value = teiArr[teisTobeAdded[t]];
         if (!value || typeof value === undefined || value === undefined) {
+			teiArr[teisTobeAdded[t]] = true;
          var obj = gettei(teisTobeAdded[t]);
          jsonData.trackedEntityInstances.push(obj);
         }
@@ -152,28 +153,6 @@ msfReportsApp
       var teisTobeAdded = [];
       document.getElementById('btnExportData').disabled = true;
       document.getElementById('loader').style.display = "block";
-
-
-      var myWorkerJson5 = new Worker('worker.js');
-      var url5 = '../../events.json?ou=' + $scope.selectedOrgUnit.id + '&program=' + program.id + '&startDate=' + $scope.startdateSelected + '&endDate=' + $scope.enddateSelected + '&skipPaging=true';
-      myWorkerJson5.postMessage(url5);
-      myWorkerJson5.addEventListener('message', function (response5) {
-        var res = (response5.data).split('&&&');
-        if (url5 != res[1]) { return }
-        var obj = jQuery.parseJSON(res[0]);
-        var data = obj;
-        jsonData.events = obj.events;
-        for (var j = 0, arr = obj.events.length; j < arr; j++) {
-          cEventsTei[obj.events[j].trackedEntityInstance] = true;
-          teisTobeAdded.push(obj.events[j].trackedEntityInstance);
-          cEventsId[obj.events[j].event] = true;
-        }
-        mwflag4 = true;
-        if (mwflag4) {
-          myWorkerJson5.terminate();
-          mapRemainingTei(teisTobeAdded, teiArr);
-        }
-      });
 
 
       var myWorkerJson4 = new Worker('worker.js');
@@ -196,7 +175,7 @@ msfReportsApp
         if (mwflag3) {
           myWorkerJson4.terminate();
           mapRemainingTei(teisTobeAdded, teiArr);
-          document.getElementById('btnExportData').disabled = true;
+          document.getElementById('btnExportData').disabled = false;
         }
       });
 
