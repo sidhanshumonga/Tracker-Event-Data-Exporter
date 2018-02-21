@@ -156,7 +156,7 @@ msfReportsApp
 
 
       var myWorkerJson4 = new Worker('worker.js');
-      var url4 = '../../events.json?ou=' + $scope.selectedOrgUnit.id + '&program=' + program.id + '&lastUpdatedStartDate=' + $scope.startdateSelected + '&lastUpdatedEndDate=' + $scope.enddateSelected + '&skipPaging=true';
+      var url4 = '../../events.json?ou=' + $scope.selectedOrgUnit.id + '&program=' + program.id + '&lastUpdatedStartDate=' + $scope.startdateSelected + '&lastUpdatedEndDate=' + $scope.enddateSelected + '&includeDeleted=true&skipPaging=true';
       myWorkerJson4.postMessage(url4);
       myWorkerJson4.addEventListener('message', function (response4) {
         var res = (response4.data).split('&&&');
