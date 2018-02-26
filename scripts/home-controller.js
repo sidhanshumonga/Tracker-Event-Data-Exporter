@@ -391,19 +391,24 @@ msfReportsApp.directive('calendar', function () {
   
       };
   
-      var getTeiData = function (eventsAtrr) {
-        var temprMap = [];
-        for (var r = 0, lenn = eventsAtrr.length; r < lenn; r++) {
-          var valuess = eventsAtrr[r];
-          var count = keyMap[valuess.attribute];
-          var value = valuess.value;
-          var optionValue = optionSetArr[value];
-          if (typeof optionValue === undefined || optionValue === undefined) { }
-          else { var value = optionValue; }
-          temprMap[count] = value;
-        }
-        return JSON.parse(JSON.stringify(temprMap));;
-      };
+     
+    var getTeiData = function (eventsAtrr) {
+      var temprMap = [];
+      for (var r = 0, lenn = eventsAtrr.length; r < lenn; r++) {
+        var valuess = eventsAtrr[r];
+        var count = keyMap[valuess.attribute];
+       
+if(valuess.attribute == "qak2Z7cCMpD" || valuess.attribute == "ezNf2g94ycZ" || valuess.attribute == "FzXnQEnYFa5"){
+var value = "PRIVATE";
+}
+else{var value = valuess.value;}
+        var optionValue = optionSetArr[value];
+        if (typeof optionValue === undefined || optionValue === undefined) { }
+        else { var value = optionValue; }
+        temprMap[count] = value;
+      }
+      return JSON.parse(JSON.stringify(temprMap));;
+    };;
   
       var teiResponse;
       var terminateWork = false;
