@@ -1183,7 +1183,7 @@
                     }
 
                     function requestUserStyle() {
-                        var currentUserStyleUrl = [baseUrl, 'api', 'userSettings', 'currentStyle'].join('/');
+                        var currentUserStyleUrl = [baseUrl, 'api/', 'userSettings/', 'keyStyle'].join('');
 
                         return $http.get(currentUserStyleUrl, {responseType: 'text', cache: true, headers: {'Accept': 'text/plain'}})
                             .then(function (response) {
