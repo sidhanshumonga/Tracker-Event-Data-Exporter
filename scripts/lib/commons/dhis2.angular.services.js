@@ -37,7 +37,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
     var getLocale = function () {
         var locale = 'en';
 
-        var promise = $http.get('../api/me/profile.json').then(function (response) {
+        var promise = $http.get('../../me/profile.json').then(function (response) {
             SessionStorageService.set('USER_PROFILE', response.data);
             if (response.data && response.data.settings && response.data.settings.keyUiLocale) {
                 locale = response.data.settings.keyUiLocale;

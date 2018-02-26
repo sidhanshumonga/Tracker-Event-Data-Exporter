@@ -2,8 +2,8 @@
 msfReportsApp.controller('LeftBarMenuController',
         function($scope,
                 $location) {
-    $scope.showTodaySchedule = function(){
-        $location.path('/schedule-today').search();
+    $scope.exportappFun = function(){
+        $location.path('/exportapp').search();
     };
             $scope.showEventReport = function(){
                 $location.path('/event-report').search();
