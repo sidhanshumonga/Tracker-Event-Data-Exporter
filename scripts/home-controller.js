@@ -144,7 +144,10 @@ msfReportsApp.directive('calendar', function () {
           if (!value || typeof value === undefined || value === undefined) {
               teiArr[teisTobeAdded[t]] = true;
            var obj = gettei(teisTobeAdded[t]);
-           jsonData.trackedEntityInstances.push(obj);
+              if(obj == ""){}
+           else{
+            jsonData.trackedEntityInstances.push(obj);
+           }
           }
         }
       };
