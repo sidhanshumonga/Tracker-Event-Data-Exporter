@@ -80,6 +80,8 @@ msfReportsApp.directive('calendar', function () {
   
   
       var psArray = [];
+
+     
   
       $scope.loadProgramStages = function (response) {
         psArray = [];
@@ -144,11 +146,18 @@ msfReportsApp.directive('calendar', function () {
           if (!value || typeof value === undefined || value === undefined) {
               teiArr[teisTobeAdded[t]] = true;
            var obj = gettei(teisTobeAdded[t]);
-              if(obj == ""){}
+           if(obj == ""){}
            else{
             jsonData.trackedEntityInstances.push(obj);
            }
           }
+          if(teisTobeAdded.length - 1 == t){
+            document.getElementById('btnExportData').disabled = false;
+            $scope.jsondone = true;
+          }
+        }
+        if($scope.reportdone && $scope.jsondone){
+          document.getElementById('loader').style.display = "none";
         }
       };
   
@@ -160,7 +169,7 @@ msfReportsApp.directive('calendar', function () {
         var cEventsTei = [];
         var cEventsId = [];
         var teisTobeAdded = [];
-        document.getElementById('btnExportData').disabled = true;
+        //document.getElementById('btnExportData').disabled = true;
         document.getElementById('loader').style.display = "block";
   
   
@@ -184,7 +193,6 @@ msfReportsApp.directive('calendar', function () {
           if (mwflag3) {
             myWorkerJson4.terminate();
             mapRemainingTei(teisTobeAdded, teiArr);
-            document.getElementById('btnExportData').disabled = false;
           }
         });
   
@@ -319,7 +327,7 @@ msfReportsApp.directive('calendar', function () {
           w4flag = true;
           if (w4flag) {
             myWorker4.terminate();
-          //  document.getElementById('loader').style.display = "block";
+           document.getElementById('loader').style.display = "block";
             allTeiData();
           }
         });
@@ -347,7 +355,7 @@ msfReportsApp.directive('calendar', function () {
           w44flag = true;
           if (w44flag) {
             myWorker44.terminate();
-          //  document.getElementById('loader').style.display = "block";
+          document.getElementById('loader').style.display = "block";
             allTeiData();
           }
         });
@@ -388,25 +396,27 @@ msfReportsApp.directive('calendar', function () {
           if (w0flag) {
             myWorker0.terminate();
             document.getElementById('loader').style.display = "none";
-            document.getElementById('loaderdata').style.display = "none";
+          //  document.getElementById('loaderdata').style.display = "none";
           }
         });
   
       };
-  
-      var getTeiData = function (eventsAtrr) {
-        var temprMap = [];
-        for (var r = 0, lenn = eventsAtrr.length; r < lenn; r++) {
-          var valuess = eventsAtrr[r];
-          var count = keyMap[valuess.attribute];
-          var value = valuess.value;
-          var optionValue = optionSetArr[value];
-          if (typeof optionValue === undefined || optionValue === undefined) { }
-          else { var value = optionValue; }
-          temprMap[count] = value;
-        }
-        return JSON.parse(JSON.stringify(temprMap));;
-      };
+      $scope.reportdone =  false;
+      $scope.jsondone =  false;
+     
+    var getTeiData = function (eventsAtrr) {
+      var temprMap = [];
+      for (var r = 0, lenn = eventsAtrr.length; r < lenn; r++) {
+        var valuess = eventsAtrr[r];
+        var count = keyMap[valuess.attribute];
+       var value = valuess.value;
+        var optionValue = optionSetArr[value];
+        if (typeof optionValue === undefined || optionValue === undefined) { }
+        else { var value = optionValue; }
+        temprMap[count] = value;
+      }
+      return JSON.parse(JSON.stringify(temprMap));;
+    };;
   
       var teiResponse;
       var terminateWork = false;
@@ -432,29 +442,6 @@ msfReportsApp.directive('calendar', function () {
           else {
             tempMap = getTeiData(teiattr);
           }
-          // var myWorker9 = new Worker('worker.js');
-          // var url2 = '../../trackedEntityInstances/' + tei + '.json?fields=*';
-          // var w5flag = false;
-  
-          // console.log(url2);
-  
-          // myWorker9.postMessage(url2);
-          // myWorker9.addEventListener('message', function (response) {
-  
-          //   var res2 = (response.data).split('&&&');
-          //   if (url2 != res2[1]) { return }
-          //   var obj = jQuery.parseJSON(res2[0]);
-          //   teiResponse = obj;
-          //   //  console.log(data);
-  
-  
-          //   tempMap = getTeiData(teiResponse);
-  
-          //   w5flag = true;
-          //   if (w5flag) {
-          //     myWorker9.terminate();
-          //   }
-          // });
           var emptyRows = 0;
           var myWorker6 = new Worker('worker.js');
           var url3 = '../../events.json?trackedEntityInstance=' + tei + '&program=' + program.id + '&order=eventDate:ASC&skipPaging=true';
@@ -523,7 +510,8 @@ msfReportsApp.directive('calendar', function () {
             }
             if ((oldIndex + pageIndex + emptyRows) >= totalEnrollments - 1) {
               terminateWork = true;
-              document.getElementById('loader').style.display = "none";
+              $scope.reportdone = true;
+             // document.getElementById('loader').style.display = "none";
             }
   
           });
@@ -532,7 +520,7 @@ msfReportsApp.directive('calendar', function () {
         });
         if (w6flag) {
           //  myWorker6.terminate();
-          document.getElementById('loader').style.display = "none";
+         // document.getElementById('loader').style.display = "none";
         }
       };
   
