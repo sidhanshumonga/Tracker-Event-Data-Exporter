@@ -232,6 +232,15 @@ msfReportsApp.directive('calendar', function () {
       };
   
       $scope.downloadJson = function () {
+		  for(var g = 0; g < jsonData.trackedEntityInstances.length;g++){
+			  var attrValues = jsonData.trackedEntityInstances[g].attributes;
+				for(var t = 0; t < attrValues.length;t++){
+					if(attrValues[t].attribute == "qak2Z7cCMpD" || attrValues[t].attribute == "ezNf2g94ycZ" || attrValues[t].attribute == "FzXnQEnYFa5"){
+						attrValues[t].value = "PRIVATE";
+					}
+				}
+		  }
+		  console.log(jsonData);
         download(JSON.stringify(jsonData), 'exported data_' + $scope.selectedOrgUnit.id + '_' + $scope.startdateSelected + '_to_' + $scope.enddateSelected + '.json');
       };
   
@@ -514,6 +523,9 @@ else{var value = valuess.value;}
             if ((oldIndex + pageIndex + emptyRows) >= totalEnrollments - 1) {
               terminateWork = true;
               $scope.reportdone = true;
+			  if($scope.reportdone && $scope.jsondone){
+          document.getElementById('loader').style.display = "none";
+        }
              // document.getElementById('loader').style.display = "none";
             }
   
