@@ -81,6 +81,20 @@ msfReportsApp.directive('calendar', function () {
   
       var psArray = [];
 
+      var _getOrgUnitName = function (ou) {
+        var def = "";
+        $.ajax({
+            type: "GET",
+            async:false,
+            dataType: "json",
+            contentType: "application/json",
+            url: "../../organisationUnits/"+ ou +".json?&fields=[name,id]",
+            success: function (data) {
+                def  = data.name;
+            }
+        });
+        return def;
+    };
      
   
       $scope.loadProgramStages = function (response) {
@@ -156,7 +170,7 @@ msfReportsApp.directive('calendar', function () {
             $scope.jsondone = true;
           }
         }
-        if($scope.reportdone && $scope.jsondone){
+        if($scope.reportdone || $scope.jsondone){
           document.getElementById('loader').style.display = "none";
         }
       };
@@ -541,11 +555,11 @@ msfReportsApp.directive('calendar', function () {
           for (var j = 0, arrLen1 = data2.programStages.length; j < arrLen1; j++) {
             // getHeaderRow(json,program, row, hr, index, j);
             var pid = data2.programStages[j].id;
-            hr = hr + "<th style='background-color:lightgray;border:1px solid black' colspan ='" + data2.programStages[j].programStageDataElements.length + "'>" + json.programStages[counter].name + "</th>";
+            hr = hr + "<th style='background-color:#c6c6c8;border:1px solid black' colspan ='" + data2.programStages[j].programStageDataElements.length + "'>" + json.programStages[counter].name + "</th>";
             for (var k = 0, arrL = data2.programStages[j].programStageDataElements.length; k < arrL; k++) {
               var nameDe = data2.programStages[j].programStageDataElements[k].dataElement.name;
               var idDe = data2.programStages[j].programStageDataElements[k].dataElement.id;
-              row = row + "<th class='rows' style='background-color:lightgray;border:1px solid black' id='" + idDe + "'>" + nameDe + "</th>";
+              row = row + "<th class='rows' style='background-color:#c6c6c8;border:1px solid black' id='" + idDe + "'>" + nameDe + "</th>";
               keyMap[pid + '+' + idDe] = index;
               keyMap2[index] = pid + '+' + idDe;
               index++;
@@ -582,8 +596,9 @@ msfReportsApp.directive('calendar', function () {
         var myWorker1 = new Worker('worker.js');
         $(".reporttable tbody").remove();
         $(".reporttable tbody").detach();
-        var row = "<tr style='background-color:lightgray;border:1px solid black' ><th style='background-color:lightgray;border:1px solid black'>Event Name</th><th style='background-color:lightgray;border:1px solid black'>Event Date</th><th style='background-color:lightgray;border:1px solid black'>Orgunit</th>";
+       var row = "<tr style='background-color:#c6c6c8;border:1px solid black' ><th style='background-color:#c6c6c8;border:1px solid black'>Event Name</th><th style='background-color:#c6c6c8;border:1px solid black'>Event Date</th><th style='background-color:#c6c6c8;border:1px solid black'>Orgunit</th>";
         var json = "";
+        var ouname =  _getOrgUnitName($scope.selectedOrgUnit.id);
         var index = 4;
         var url = '../../programs/' + program.id + '.json?fields=programTrackedEntityAttributes';
         myWorker1.postMessage(url);
@@ -596,9 +611,10 @@ msfReportsApp.directive('calendar', function () {
             keyMap[data1.programTrackedEntityAttributes[i].trackedEntityAttribute.id] = index;
             keyMap2[index] = data1.programTrackedEntityAttributes[i].trackedEntityAttribute.id;
             index++;
-            row = row + "<th style='background-color:lightgray;border:1px solid black' class='rows' id='" + data1.programTrackedEntityAttributes[i].trackedEntityAttribute.id + "'>" + data1.programTrackedEntityAttributes[i].displayName + "</th>";
+            row = row + "<th style='background-color:#c6c6c8;border:1px solid black' class='rows' id='" + data1.programTrackedEntityAttributes[i].trackedEntityAttribute.id + "'>" + data1.programTrackedEntityAttributes[i].displayName + "</th>";
           }
-          var hr = "<tr><th style='background-color:lightgray;border:1px solid black' colspan='" + (data1.programTrackedEntityAttributes.length + 3) + "'>Attributes</th>";
+          var hr = "<tr style='background-color:#c6c6c8;border:1px solid black' ><th style='border:1px solid black' colspan='4'>Date Selected : </th><th style='border:1px solid black' colspan='4'>"+ $scope.startdateSelected + " to " + $scope.enddateSelected + "</th><th style='border:1px solid black' colspan='4'>Orgranisation Unit : </th><th style='border:1px solid black' colspan='4'>" + ouname + "</th>";
+          hr = hr + "<tr style='background-color:#c6c6c8;'><th style='background-color:#c6c6c8;border:1px solid black' colspan='" + (data1.programTrackedEntityAttributes.length + 3) + "'>Attributes</th>";
           flagg = 1;
           getRows(row, hr, program, index);
           w1flag = true;
