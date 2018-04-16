@@ -366,10 +366,10 @@ msfReportsApp.directive('calendar', function () {
         for (var h = 1, arrLen3 = keyMap2.length; h < arrLen3; h++) {
           //console.log(finalKeyMap[4])
           if (finalKeyMap.hasOwnProperty(h) && finalKeyMap[h] != null) {
-            newRow = newRow + "<td>" + finalKeyMap[h] + "</td>";
+            newRow = newRow + "<td style='border:1px solid black'>" + finalKeyMap[h] + "</td>";
           }
           else {
-            newRow = newRow + "<td></td>";
+            newRow = newRow + "<td style='border:1px solid black'></td>";
           }
         }
         $('.reporttable').append(newRow + "</tr>");
@@ -472,15 +472,15 @@ msfReportsApp.directive('calendar', function () {
               else { finalKeyMap[2] = (eventElement.eventDate).split('T')[0]; }
               finalKeyMap[3] = eventElement.orgUnitName;
   
-              if (finalKeyMap[1] == "First Visit") { var newRow = "<tr style='background-color:#abbedf'>"; }
+              if (finalKeyMap[1] == "First Visit") { var newRow = "<tr style='background-color:#abbedf;border:1px solid black'>"; }
               else if (finalKeyMap[1] == "Follow-up Visit") { var newRow = "<tr>"; }
-              else if (finalKeyMap[1] == "Exit") { var newRow = "<tr style='background-color:#95a3ba'>"; }
+              else if (finalKeyMap[1] == "Exit") { var newRow = "<tr style='background-color:#95a3ba;border:1px solid black'>"; }
               else {
                 if (finalKeyMap[1] == program.programStages[0].name) {
-                  var newRow = "<tr style='background-color:#e1f8ff'>";
+                  var newRow = "<tr style='background-color:#e1f8ff;border:1px solid black'>";
                 }
                 else {
-                  var newRow = "<tr>";
+                  var newRow = "<tr style='border:1px solid black'>";
                 }
               }
               for (var n = 0, arr = eventElement.dataValues.length; n < arr; n++) {
@@ -541,11 +541,11 @@ msfReportsApp.directive('calendar', function () {
           for (var j = 0, arrLen1 = data2.programStages.length; j < arrLen1; j++) {
             // getHeaderRow(json,program, row, hr, index, j);
             var pid = data2.programStages[j].id;
-            hr = hr + "<th colspan ='" + data2.programStages[j].programStageDataElements.length + "'>" + json.programStages[counter].name + "</th>";
+            hr = hr + "<th style='background-color:lightgray;border:1px solid black' colspan ='" + data2.programStages[j].programStageDataElements.length + "'>" + json.programStages[counter].name + "</th>";
             for (var k = 0, arrL = data2.programStages[j].programStageDataElements.length; k < arrL; k++) {
               var nameDe = data2.programStages[j].programStageDataElements[k].dataElement.name;
               var idDe = data2.programStages[j].programStageDataElements[k].dataElement.id;
-              row = row + "<th class='rows' id='" + idDe + "'>" + nameDe + "</th>";
+              row = row + "<th class='rows' style='background-color:lightgray;border:1px solid black' id='" + idDe + "'>" + nameDe + "</th>";
               keyMap[pid + '+' + idDe] = index;
               keyMap2[index] = pid + '+' + idDe;
               index++;
@@ -582,7 +582,7 @@ msfReportsApp.directive('calendar', function () {
         var myWorker1 = new Worker('worker.js');
         $(".reporttable tbody").remove();
         $(".reporttable tbody").detach();
-        var row = "<tr><th>Event Name</th><th>Event Date</th><th>Orgunit</th>";
+        var row = "<tr style='background-color:lightgray;border:1px solid black' ><th style='background-color:lightgray;border:1px solid black'>Event Name</th><th style='background-color:lightgray;border:1px solid black'>Event Date</th><th style='background-color:lightgray;border:1px solid black'>Orgunit</th>";
         var json = "";
         var index = 4;
         var url = '../../programs/' + program.id + '.json?fields=programTrackedEntityAttributes';
@@ -596,9 +596,9 @@ msfReportsApp.directive('calendar', function () {
             keyMap[data1.programTrackedEntityAttributes[i].trackedEntityAttribute.id] = index;
             keyMap2[index] = data1.programTrackedEntityAttributes[i].trackedEntityAttribute.id;
             index++;
-            row = row + "<th class='rows' id='" + data1.programTrackedEntityAttributes[i].trackedEntityAttribute.id + "'>" + data1.programTrackedEntityAttributes[i].displayName + "</th>";
+            row = row + "<th style='background-color:lightgray;border:1px solid black' class='rows' id='" + data1.programTrackedEntityAttributes[i].trackedEntityAttribute.id + "'>" + data1.programTrackedEntityAttributes[i].displayName + "</th>";
           }
-          var hr = "<tr><th colspan='" + (data1.programTrackedEntityAttributes.length + 3) + "'>Attributes</th>";
+          var hr = "<tr><th style='background-color:lightgray;border:1px solid black' colspan='" + (data1.programTrackedEntityAttributes.length + 3) + "'>Attributes</th>";
           flagg = 1;
           getRows(row, hr, program, index);
           w1flag = true;
