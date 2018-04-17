@@ -170,7 +170,7 @@ msfReportsApp.directive('calendar', function () {
             $scope.jsondone = true;
           }
         }
-        if($scope.reportdone || $scope.jsondone){
+        if($scope.reportdone && $scope.jsondone){
           document.getElementById('loader').style.display = "none";
         }
       };
@@ -525,6 +525,9 @@ msfReportsApp.directive('calendar', function () {
             if ((oldIndex + pageIndex + emptyRows) >= totalEnrollments - 1) {
               terminateWork = true;
               $scope.reportdone = true;
+              if($scope.reportdone && $scope.jsondone){
+                document.getElementById('loader').style.display = "none";
+              }
              // document.getElementById('loader').style.display = "none";
             }
   
