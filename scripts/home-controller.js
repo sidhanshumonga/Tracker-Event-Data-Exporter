@@ -154,10 +154,8 @@ msfReportsApp.directive('calendar', function () {
           if(teisTobeAdded.length - 1 == t){
             document.getElementById('btnExportData').disabled = false;
             $scope.jsondone = true;
+            handleLoader();
           }
-        }
-        if($scope.reportdone && $scope.jsondone){
-          document.getElementById('loader').style.display = "none";
         }
       };
   
@@ -410,6 +408,14 @@ msfReportsApp.directive('calendar', function () {
         });
   
       };
+
+      var handleLoader = function(){
+        if($scope.reportdone && $scope.jsondone){
+          document.getElementById('loader').style.display = "none";
+        }
+      }
+
+
       $scope.reportdone =  false;
       $scope.jsondone =  false;
      
@@ -443,7 +449,9 @@ else{var value = valuess.value;}
         }
         var g = 0;
         var pageIndex = 0;
-  
+        if(enrollmentsArr.length == 49){
+          pageIndex = 1;
+        }
         enrollmentsArr.forEach(function (element) {
           //tempMap = [];
           tei = element;
@@ -523,9 +531,7 @@ else{var value = valuess.value;}
             if ((oldIndex + pageIndex + emptyRows) >= totalEnrollments - 1) {
               terminateWork = true;
               $scope.reportdone = true;
-			  if($scope.reportdone && $scope.jsondone){
-          document.getElementById('loader').style.display = "none";
-        }
+              handleLoader();
              // document.getElementById('loader').style.display = "none";
             }
   
