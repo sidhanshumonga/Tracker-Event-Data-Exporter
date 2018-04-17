@@ -154,7 +154,7 @@ msfReportsApp.directive('calendar', function () {
           if(teisTobeAdded.length - 1 == t){
             document.getElementById('btnExportData').disabled = false;
             $scope.jsondone = true;
-            handleLoader();
+            setTimeout(handleLoader(),15000);
           }
         }
       };
@@ -408,11 +408,9 @@ msfReportsApp.directive('calendar', function () {
         });
   
       };
-
+      var handlecount = 0;
       var handleLoader = function(){
-        if($scope.reportdone && $scope.jsondone){
-          document.getElementById('loader').style.display = "none";
-        }
+                    document.getElementById('loader').style.display = "none";
       }
 
 
@@ -531,7 +529,7 @@ else{var value = valuess.value;}
             if ((oldIndex + pageIndex + emptyRows) >= totalEnrollments - 1) {
               terminateWork = true;
               $scope.reportdone = true;
-              handleLoader();
+              setTimeout(handleLoader(),10000);
              // document.getElementById('loader').style.display = "none";
             }
   
