@@ -461,6 +461,7 @@ msfReportsApp.directive('calendar', function () {
           var tempMap = [];
   
           var teiattr = teiArray[tei];
+		  teiResponse = teiattr;
           if (teiattr === undefined) { }
           else {
             tempMap = getTeiData(teiattr);
