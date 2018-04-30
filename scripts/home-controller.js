@@ -81,20 +81,6 @@ msfReportsApp.directive('calendar', function () {
   
       var psArray = [];
 
-      var _getOrgUnitName = function (ou) {
-        var def = "";
-        $.ajax({
-            type: "GET",
-            async:false,
-            dataType: "json",
-            contentType: "application/json",
-            url: "../../organisationUnits/"+ ou +".json?&fields=[name,id]",
-            success: function (data) {
-                def  = data.name;
-            }
-        });
-        return def;
-    };
      
   
       $scope.loadProgramStages = function (response) {
@@ -168,7 +154,7 @@ msfReportsApp.directive('calendar', function () {
           if(teisTobeAdded.length - 1 == t){
             document.getElementById('btnExportData').disabled = false;
             $scope.jsondone = true;
-            handleLoader();
+            setTimeout(handleLoader(),15000);
           }
         }
       };
@@ -244,6 +230,15 @@ msfReportsApp.directive('calendar', function () {
       };
   
       $scope.downloadJson = function () {
+		  for(var g = 0; g < jsonData.trackedEntityInstances.length;g++){
+			  var attrValues = jsonData.trackedEntityInstances[g].attributes;
+				for(var t = 0; t < attrValues.length;t++){
+					if(attrValues[t].attribute == "qak2Z7cCMpD" || attrValues[t].attribute == "ezNf2g94ycZ" || attrValues[t].attribute == "FzXnQEnYFa5"){
+						attrValues[t].value = "PRIVATE";
+					}
+				}
+		  }
+		  console.log(jsonData);
         download(JSON.stringify(jsonData), 'exported data_' + $scope.selectedOrgUnit.id + '_' + $scope.startdateSelected + '_to_' + $scope.enddateSelected + '.json');
       };
   
@@ -378,10 +373,10 @@ msfReportsApp.directive('calendar', function () {
         for (var h = 1, arrLen3 = keyMap2.length; h < arrLen3; h++) {
           //console.log(finalKeyMap[4])
           if (finalKeyMap.hasOwnProperty(h) && finalKeyMap[h] != null) {
-            newRow = newRow + "<td style='border:1px solid black'>" + finalKeyMap[h] + "</td>";
+            newRow = newRow + "<td>" + finalKeyMap[h] + "</td>";
           }
           else {
-            newRow = newRow + "<td style='border:1px solid black'></td>";
+            newRow = newRow + "<td></td>";
           }
         }
         $('.reporttable').append(newRow + "</tr>");
@@ -413,23 +408,24 @@ msfReportsApp.directive('calendar', function () {
         });
   
       };
-      $scope.reportdone =  false;
-      $scope.jsondone =  false;
-     
+      var handlecount = 0;
       var handleLoader = function(){
-        if($scope.reportdone && $scope.jsondone){
-          document.getElementById('loader').style.display = "none";
-        }
+                    document.getElementById('loader').style.display = "none";
       }
 
 
-
+      $scope.reportdone =  false;
+      $scope.jsondone =  false;
+     
     var getTeiData = function (eventsAtrr) {
       var temprMap = [];
       for (var r = 0, lenn = eventsAtrr.length; r < lenn; r++) {
         var valuess = eventsAtrr[r];
         var count = keyMap[valuess.attribute];
-       var value = valuess.value;
+      if(valuess.attribute == "qak2Z7cCMpD" || valuess.attribute == "ezNf2g94ycZ" || valuess.attribute == "FzXnQEnYFa5"){
+var value = "PRIVATE";
+}
+else{var value = valuess.value;}
         var optionValue = optionSetArr[value];
         if (typeof optionValue === undefined || optionValue === undefined) { }
         else { var value = optionValue; }
@@ -451,8 +447,7 @@ msfReportsApp.directive('calendar', function () {
         }
         var g = 0;
         var pageIndex = 0;
-        
-        if(enrollmentsArr.length  == 49){
+        if(enrollmentsArr.length == 49){
           pageIndex = 1;
         }
         enrollmentsArr.forEach(function (element) {
@@ -495,15 +490,15 @@ msfReportsApp.directive('calendar', function () {
               else { finalKeyMap[2] = (eventElement.eventDate).split('T')[0]; }
               finalKeyMap[3] = eventElement.orgUnitName;
   
-              if (finalKeyMap[1] == "First Visit") { var newRow = "<tr style='background-color:#abbedf;border:1px solid black'>"; }
+              if (finalKeyMap[1] == "First Visit") { var newRow = "<tr style='background-color:#abbedf'>"; }
               else if (finalKeyMap[1] == "Follow-up Visit") { var newRow = "<tr>"; }
-              else if (finalKeyMap[1] == "Exit") { var newRow = "<tr style='background-color:#95a3ba;border:1px solid black'>"; }
+              else if (finalKeyMap[1] == "Exit") { var newRow = "<tr style='background-color:#95a3ba'>"; }
               else {
                 if (finalKeyMap[1] == program.programStages[0].name) {
-                  var newRow = "<tr style='background-color:#e1f8ff;border:1px solid black'>";
+                  var newRow = "<tr style='background-color:#e1f8ff'>";
                 }
                 else {
-                  var newRow = "<tr style='border:1px solid black'>";
+                  var newRow = "<tr>";
                 }
               }
               for (var n = 0, arr = eventElement.dataValues.length; n < arr; n++) {
@@ -531,11 +526,10 @@ msfReportsApp.directive('calendar', function () {
               oldIndex = oldIndex + pageIndex;
               getEnrollments(keyMap, program);
             }
-            console.log(oldIndex + " " + pageIndex + " " + emptyRows + " " + totalEnrollments);
             if ((oldIndex + pageIndex + emptyRows) >= totalEnrollments - 1) {
               terminateWork = true;
               $scope.reportdone = true;
-              handleLoader();
+              setTimeout(handleLoader(),10000);
              // document.getElementById('loader').style.display = "none";
             }
   
@@ -566,11 +560,11 @@ msfReportsApp.directive('calendar', function () {
           for (var j = 0, arrLen1 = data2.programStages.length; j < arrLen1; j++) {
             // getHeaderRow(json,program, row, hr, index, j);
             var pid = data2.programStages[j].id;
-            hr = hr + "<th style='background-color:#c6c6c8;border:1px solid black' colspan ='" + data2.programStages[j].programStageDataElements.length + "'>" + json.programStages[counter].name + "</th>";
+            hr = hr + "<th colspan ='" + data2.programStages[j].programStageDataElements.length + "'>" + json.programStages[counter].name + "</th>";
             for (var k = 0, arrL = data2.programStages[j].programStageDataElements.length; k < arrL; k++) {
               var nameDe = data2.programStages[j].programStageDataElements[k].dataElement.name;
               var idDe = data2.programStages[j].programStageDataElements[k].dataElement.id;
-              row = row + "<th class='rows' style='background-color:#c6c6c8;border:1px solid black' id='" + idDe + "'>" + nameDe + "</th>";
+              row = row + "<th class='rows' id='" + idDe + "'>" + nameDe + "</th>";
               keyMap[pid + '+' + idDe] = index;
               keyMap2[index] = pid + '+' + idDe;
               index++;
@@ -607,9 +601,8 @@ msfReportsApp.directive('calendar', function () {
         var myWorker1 = new Worker('worker.js');
         $(".reporttable tbody").remove();
         $(".reporttable tbody").detach();
-       var row = "<tr style='background-color:#c6c6c8;border:1px solid black' ><th style='background-color:#c6c6c8;border:1px solid black'>Event Name</th><th style='background-color:#c6c6c8;border:1px solid black'>Event Date</th><th style='background-color:#c6c6c8;border:1px solid black'>Orgunit</th>";
+        var row = "<tr><th>Event Name</th><th>Event Date</th><th>Orgunit</th>";
         var json = "";
-        var ouname =  _getOrgUnitName($scope.selectedOrgUnit.id);
         var index = 4;
         var url = '../../programs/' + program.id + '.json?fields=programTrackedEntityAttributes';
         myWorker1.postMessage(url);
@@ -622,10 +615,9 @@ msfReportsApp.directive('calendar', function () {
             keyMap[data1.programTrackedEntityAttributes[i].trackedEntityAttribute.id] = index;
             keyMap2[index] = data1.programTrackedEntityAttributes[i].trackedEntityAttribute.id;
             index++;
-            row = row + "<th style='background-color:#c6c6c8;border:1px solid black' class='rows' id='" + data1.programTrackedEntityAttributes[i].trackedEntityAttribute.id + "'>" + data1.programTrackedEntityAttributes[i].displayName + "</th>";
+            row = row + "<th class='rows' id='" + data1.programTrackedEntityAttributes[i].trackedEntityAttribute.id + "'>" + data1.programTrackedEntityAttributes[i].displayName + "</th>";
           }
-          var hr = "<tr style='background-color:#c6c6c8;border:1px solid black' ><th style='border:1px solid black' colspan='4'>Date Selected : </th><th style='border:1px solid black' colspan='4'>"+ $scope.startdateSelected + " to " + $scope.enddateSelected + "</th><th style='border:1px solid black' colspan='4'>Orgranisation Unit : </th><th style='border:1px solid black' colspan='4'>" + ouname + "</th>";
-          hr = hr + "<tr style='background-color:#c6c6c8;'><th style='background-color:#c6c6c8;border:1px solid black' colspan='" + (data1.programTrackedEntityAttributes.length + 3) + "'>Attributes</th>";
+          var hr = "<tr><th colspan='" + (data1.programTrackedEntityAttributes.length + 3) + "'>Attributes</th>";
           flagg = 1;
           getRows(row, hr, program, index);
           w1flag = true;
