@@ -215,6 +215,7 @@ msfReportsApp
         }
       }
       $('.eventsreporttable').append(newRow + "</tr>");
+      document.getElementById('loader').style.display = "none";
     };
 
     var keyMap = [];
@@ -291,7 +292,6 @@ msfReportsApp
             $('.eventsreporttable').append(hr + "</tr>" + row + "</tr>");
             console.log(keyMap);
             console.log(keyMap2);
-            document.getElementById('loader').style.display = "none";
             getEvents(keyMap, program);
           }
         }
