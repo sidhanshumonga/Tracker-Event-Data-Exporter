@@ -251,6 +251,7 @@ msfReportsApp.directive('calendar', function () {
         var ouname =  _getOrgUnitName($scope.selectedOrgUnit.id);
         var index = 1;
         var counter = 0;
+        
         var url = '../../programs/' + program.id + '.json?fields=programStages[id,name,programStageDataElements[dataElement[id,name]]]';
         myWorker1.postMessage(url);
         myWorker1.addEventListener('message', function (response) {
@@ -259,14 +260,15 @@ msfReportsApp.directive('calendar', function () {
           var obj = jQuery.parseJSON(res1[0]);
           var data2 = obj;
           var row = "";
+          var hr = "<tr>";
           for (var j = 0, arrLen1 = data2.programStages.length; j < arrLen1; j++) {
             // getHeaderRow(json,program, row, hr, index, j);
             var pid = data2.programStages[j].id;
-            var hr ="<th colspan ='" + data2.programStages[j].programStageDataElements.length + "'>" + data2.programStages[counter].name + "</th>";
+             hr = hr + "<th colspan ='" + data2.programStages[j].programStageDataElements.length + "'>" + data2.programStages[counter].name + "</th>";
             for (var k = 0, arrL = data2.programStages[j].programStageDataElements.length; k < arrL; k++) {
               var nameDe = data2.programStages[j].programStageDataElements[k].dataElement.name;
               var idDe = data2.programStages[j].programStageDataElements[k].dataElement.id;
-              row = row + "<th class='rows'  id='" + idDe + "'>" + nameDe + "</th>";
+              row = row + "<th class='eventrows' id='" + idDe + "'>" + nameDe + "</th>";
               keyMap[pid + '+' + idDe] = index;
               keyMap2[index] = pid + '+' + idDe;
               index++;
@@ -274,6 +276,9 @@ msfReportsApp.directive('calendar', function () {
             counter++;
             if (counter == data2.programStages.length) {
               $('.eventsreporttable').append(hr + "</tr>" + row + "</tr>");
+              console.log(keyMap);
+              console.log(keyMap2);
+              document.getElementById('loader').style.display = "none";
               //getEvents(keyMap, program);
             }
           }
