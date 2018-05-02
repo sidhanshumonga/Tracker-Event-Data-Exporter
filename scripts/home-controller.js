@@ -114,7 +114,7 @@ msfReportsApp
       var blob = new Blob([document.getElementById('divId').innerHTML], {
         type: 'text/plain;charset=utf-8'
       });
-      saveAs(blob, "Report.xls");
+      saveAs(blob, "Tracker events report.xls");
 
     };
 
