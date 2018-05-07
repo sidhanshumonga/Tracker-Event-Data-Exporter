@@ -133,9 +133,29 @@ msfReportsApp
     };
 
     var jsonData = {
-      trackedEntityInstances: [],
-      enrollments: [],
       events: []
+    };
+
+    $scope.exportDataJson = function (program) {
+      var mwflag3 = false;
+
+      var myWorkerJson4 = new Worker('worker.js');
+      var url4 = '../../events.json?ou=' + $scope.selectedOrgUnit.id + '&program=' + program.id + '&order=eventDate:ASC&skipPaging=true&startDate=' + $scope.startdateSelected + '&endDate=' + $scope.enddateSelected;
+      myWorkerJson4.postMessage(url4);
+      myWorkerJson4.addEventListener('message', function (response4) {
+        var res = (response4.data).split('&&&');
+        if (url4 != res[1]) { return }
+        var obj = jQuery.parseJSON(res[0]);
+        var data = obj;
+
+        for (var j = 0, arr = obj.events.length; j < arr; j++) {
+           jsonData.events.push(obj.events[j]); 
+        }
+        mwflag3 = true;
+        if (mwflag3) {
+          myWorkerJson4.terminate();
+        }
+      });
     };
 
     $scope.downloadJson = function () {
@@ -253,7 +273,7 @@ msfReportsApp
     $scope.generateEventsReport = function (program) {
       $scope.isDisabled = false;
       programid = program.id;
-
+      $scope.exportDataJson(program);
       var w1flag = false;
       document.getElementById('loader').style.display = "block";
 
