@@ -58,7 +58,7 @@ dhis2.translate = dhis2.translate || {};
                     baseUrl;
 
                 if (dhis2.settings === undefined || dhis2.settings.baseUrl === undefined) {
-                    return "../../../";
+                    return "../../..";
                 }
 
                 if (typeof dhis2.settings.baseUrl !== "string") {
