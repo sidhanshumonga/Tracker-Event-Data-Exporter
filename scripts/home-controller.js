@@ -88,7 +88,6 @@ msfReportsApp
       for (var i = 0; i < response.programStages.length; i++) {
         psArray[response.programStages[i].id] = response.programStages[i].name;
       }
-
       $scope.program = response;
       document.getElementById('loader').style.display = "block";
       document.getElementById('loaderdata').innerHTML = "Please wait, loading data!";
@@ -186,7 +185,6 @@ msfReportsApp
             jsonData.events.push(obj.events[j]);
             teisTobeAdded.push(obj.events[j].trackedEntityInstance);
             cEventsTei[obj.events[j].trackedEntityInstance] = true;
-
           }
         }
         mwflag3 = true;
@@ -356,27 +354,23 @@ msfReportsApp
         if (w44flag) {
           myWorker44.terminate();
           document.getElementById('loader').style.display = "block";
-
           allTeiData();
-
-          }
-        });
-  
-      };
-  
-      var printReport = function (finalKeyMap, newRow) {
-        for (var h = 1, arrLen3 = keyMap2.length; h < arrLen3; h++) {
-          //console.log(finalKeyMap[4])
-          if (finalKeyMap.hasOwnProperty(h) && finalKeyMap[h] != null) {
-            newRow = newRow + "<td style='border:1px solid black'>" + finalKeyMap[h] + "</td>";
-          }
-          else {
-            newRow = newRow + "<td style='border:1px solid black'></td>";
-          }
-
         }
       });
 
+    };
+
+    var printReport = function (finalKeyMap, newRow) {
+      for (var h = 1, arrLen3 = keyMap2.length; h < arrLen3; h++) {
+        //console.log(finalKeyMap[4])
+        if (finalKeyMap.hasOwnProperty(h) && finalKeyMap[h] != null) {
+          newRow = newRow + "<td>" + finalKeyMap[h] + "</td>";
+        }
+        else {
+          newRow = newRow + "<td></td>";
+        }
+      }
+      $('.reporttable').append(newRow + "</tr>");
     };
 
 
@@ -456,90 +450,61 @@ msfReportsApp
         else {
           tempMap = getTeiData(teiattr);
         }
-        var g = 0;
-        var pageIndex = 0;
-        
-        if(enrollmentsArr.length  == 49){
-          pageIndex = 1;
-        }
-        enrollmentsArr.forEach(function (element) {
-          //tempMap = [];
-          tei = element;
-          var tempMap = [];
-  
-          var teiattr = teiArray[tei];
-		  teiResponse = teiattr;
-          if (teiattr === undefined) { }
-          else {
-            tempMap = getTeiData(teiattr);
-          }
-          var emptyRows = 0;
-          var myWorker6 = new Worker('worker.js');
-          var url3 = '../../events.json?trackedEntityInstance=' + tei + '&program=' + program.id + '&order=eventDate:ASC&skipPaging=true';
-          // console.log(url3);
-          myWorker6.postMessage(url3);
-          myWorker6.addEventListener('message', function (response) {
-  
-  
-            var res3 = (response.data).split('&&&');
-            if (url3 != res3[1]) { return }
-            var obj5 = jQuery.parseJSON(res3[0]);
-            var data5 = obj5;
-            pageIndex++;
-  
-            data5.events.forEach(function (eventElement) {
-              var finalKeyMap = [];
-              //finalKeyMap = tempMap;
-              if (tempMap[4] === undefined) {
-                console.log("empty row found!");
-                emptyRows++;
-                tempMap = getTeiData(teiResponse);
-              }
-              finalKeyMap = JSON.parse(JSON.stringify(tempMap));
-              //console.log(finalKeyMap);
-              var pidd = eventElement.programStage;
-              finalKeyMap[1] = psArray[pidd];
-              if (eventElement.eventDate === undefined || typeof eventElement.eventDate === undefined) { finalKeyMap[2] == "" }
-              else { finalKeyMap[2] = (eventElement.eventDate).split('T')[0]; }
-              finalKeyMap[3] = eventElement.orgUnitName;
-  
-              if (finalKeyMap[1] == "First Visit") { var newRow = "<tr style='background-color:#abbedf;border:1px solid black'>"; }
-              else if (finalKeyMap[1] == "Follow-up Visit") { var newRow = "<tr>"; }
-              else if (finalKeyMap[1] == "Exit") { var newRow = "<tr style='background-color:#95a3ba;border:1px solid black'>"; }
-              else {
-                if (finalKeyMap[1] == program.programStages[0].name) {
-                  var newRow = "<tr style='background-color:#e1f8ff;border:1px solid black'>";
-                }
-                else {
-                  var newRow = "<tr style='border:1px solid black'>";
-                }
-              }
-              for (var n = 0, arr = eventElement.dataValues.length; n < arr; n++) {
-                var value = eventElement.dataValues[n].value;
-                if (value == 'true') { value = "Yes" }
-                if (value == 'false') { value = "No" }
-                var optionValue = optionSetArr[value];
-                if (typeof optionValue === undefined || optionValue === undefined) { }
-                else { var value = optionValue; }
-                var count2 = keyMap[pidd + '+' + eventElement.dataValues[n].dataElement];
-                finalKeyMap[count2] = value;
+        var emptyRows = 0;
+        var myWorker6 = new Worker('worker.js');
+        var url3 = '../../events.json?trackedEntityInstance=' + tei + '&program=' + program.id + '&order=eventDate:ASC&skipPaging=true';
+        // console.log(url3);
+        myWorker6.postMessage(url3);
+        myWorker6.addEventListener('message', function (response) {
 
+
+          var res3 = (response.data).split('&&&');
+          if (url3 != res3[1]) { return }
+          var obj5 = jQuery.parseJSON(res3[0]);
+          var data5 = obj5;
+          pageIndex++;
+
+          data5.events.forEach(function (eventElement) {
+            var finalKeyMap = [];
+            //finalKeyMap = tempMap;
+            if (tempMap[4] === undefined) {
+              console.log("empty row found!");
+              emptyRows++;
+              tempMap = getTeiData(teiResponse);
+            }
+            finalKeyMap = JSON.parse(JSON.stringify(tempMap));
+            //console.log(finalKeyMap);
+            var pidd = eventElement.programStage;
+            finalKeyMap[1] = psArray[pidd];
+            if (eventElement.eventDate === undefined || typeof eventElement.eventDate === undefined) { finalKeyMap[2] == "" }
+            else { finalKeyMap[2] = (eventElement.eventDate).split('T')[0]; }
+            finalKeyMap[3] = eventElement.orgUnitName;
+
+            if (finalKeyMap[1] == "First Visit") { var newRow = "<tr style='background-color:#abbedf'>"; }
+            else if (finalKeyMap[1] == "Follow-up Visit") { var newRow = "<tr>"; }
+            else if (finalKeyMap[1] == "Exit") { var newRow = "<tr style='background-color:#95a3ba'>"; }
+            else {
+              if (finalKeyMap[1] == program.programStages[0].name) {
+                var newRow = "<tr style='background-color:#e1f8ff'>";
+              }
+              else {
+                var newRow = "<tr>";
               }
             }
-
-
-            console.log(oldIndex + " " + pageIndex + " " + emptyRows + " " + totalEnrollments);
-            if ((oldIndex + pageIndex + emptyRows) >= totalEnrollments - 1) {
-              terminateWork = true;
-              $scope.reportdone = true;
-              handleLoader();
-             // document.getElementById('loader').style.display = "none";
+            for (var n = 0, arr = eventElement.dataValues.length; n < arr; n++) {
+              var value = eventElement.dataValues[n].value;
+              if (value == 'true') { value = "Yes" }
+              if (value == 'false') { value = "No" }
+              var optionValue = optionSetArr[value];
+              if (typeof optionValue === undefined || optionValue === undefined) { }
+              else { var value = optionValue; }
+              var count2 = keyMap[pidd + '+' + eventElement.dataValues[n].dataElement];
+              finalKeyMap[count2] = value;
             }
 
             printReport(finalKeyMap, newRow);
 
           });
-
           w6flag = true;
           if (w6flag) {
             myWorker6.terminate();
@@ -550,6 +515,15 @@ msfReportsApp
             pagingFlag = true;
             oldIndex = oldIndex + pageIndex;
             getEnrollments(keyMap, program);
+          }
+          if ((oldIndex + pageIndex + emptyRows) >= totalEnrollments - 1) {
+            terminateWork = true;
+            $scope.reportdone = true;
+            handleLoader();
+            // document.getElementById('loader').style.display = "none";
+          }
+
+        });
 
 
       });
@@ -589,53 +563,57 @@ msfReportsApp
           if (counter == data2.programStages.length) {
             $('.reporttable').append(hr + "</tr>" + row + "</tr>");
             getEnrollments(keyMap, program);
-      };
-      var flagg = 0;
-      $scope.isDisabled = true;
-      $scope.generateReport = function (program) {
-        $scope.isDisabled = false;
-        keyMap = [];
-        keyMap2 = [];
-        //json = "";
-        //flag = "";
-        // flagCount = "";
-        // programid =  "";
-        programid = program.id;
-  
-        // allTeiData(program);
-        $scope.exportDataJson(program);
-        var w1flag = false;
-        document.getElementById('loader').style.display = "block";
-  
-        var myWorker1 = new Worker('worker.js');
-        $(".reporttable tbody").remove();
-        $(".reporttable tbody").detach();
-       var row = "<tr style='background-color:#c6c6c8;border:1px solid black' ><th style='background-color:#c6c6c8;border:1px solid black'>Event Name</th><th style='background-color:#c6c6c8;border:1px solid black'>Event Date</th><th style='background-color:#c6c6c8;border:1px solid black'>Orgunit</th>";
-        var json = "";
-        var ouname =  _getOrgUnitName($scope.selectedOrgUnit.id);
-        var index = 4;
-        var url = '../../programs/' + program.id + '.json?fields=programTrackedEntityAttributes';
-        myWorker1.postMessage(url);
-        myWorker1.addEventListener('message', function (response) {
-          var res1 = (response.data).split('&&&');
-          if (url != res1[1]) { return }
-          var obj = jQuery.parseJSON(res1[0]);
-          var data1 = obj;
-          for (var i = 0, arrayLength = data1.programTrackedEntityAttributes.length; i < arrayLength; i++) {
-            keyMap[data1.programTrackedEntityAttributes[i].trackedEntityAttribute.id] = index;
-            keyMap2[index] = data1.programTrackedEntityAttributes[i].trackedEntityAttribute.id;
-            index++;
-            row = row + "<th style='background-color:#c6c6c8;border:1px solid black' class='rows' id='" + data1.programTrackedEntityAttributes[i].trackedEntityAttribute.id + "'>" + data1.programTrackedEntityAttributes[i].displayName + "</th>";
           }
-          var hr = "<tr style='background-color:#c6c6c8;border:1px solid black' ><th style='border:1px solid black' colspan='4'>Date Selected : </th><th style='border:1px solid black' colspan='4'>"+ $scope.startdateSelected + " to " + $scope.enddateSelected + "</th><th style='border:1px solid black' colspan='4'>Orgranisation Unit : </th><th style='border:1px solid black' colspan='4'>" + ouname + "</th>";
-          hr = hr + "<tr style='background-color:#c6c6c8;'><th style='background-color:#c6c6c8;border:1px solid black' colspan='" + (data1.programTrackedEntityAttributes.length + 3) + "'>Attributes</th>";
-          flagg = 1;
-          getRows(row, hr, program, index);
-          w1flag = true;
-  
-          if (w1flag) {
-            myWorker1.terminate();
+        }
+        w2flag = true;
+        if (w2flag) {
+          myWorker2.terminate();
+        }
+      });
+    };
+    var flagg = 0;
+    $scope.isDisabled = true;
+    $scope.generateReport = function (program) {
+      $scope.isDisabled = false;
+      keyMap = [];
+      keyMap2 = [];
+      //json = "";
+      //flag = "";
+      // flagCount = "";
+      // programid =  "";
+      programid = program.id;
 
+      // allTeiData(program);
+      $scope.exportDataJson(program);
+      var w1flag = false;
+      document.getElementById('loader').style.display = "block";
+
+      var myWorker1 = new Worker('worker.js');
+      $(".reporttable tbody").remove();
+      $(".reporttable tbody").detach();
+      var row = "<tr><th>Event Name</th><th>Event Date</th><th>Orgunit</th>";
+      var json = "";
+      var index = 4;
+      var url = '../../programs/' + program.id + '.json?fields=programTrackedEntityAttributes';
+      myWorker1.postMessage(url);
+      myWorker1.addEventListener('message', function (response) {
+        var res1 = (response.data).split('&&&');
+        if (url != res1[1]) { return }
+        var obj = jQuery.parseJSON(res1[0]);
+        var data1 = obj;
+        for (var i = 0, arrayLength = data1.programTrackedEntityAttributes.length; i < arrayLength; i++) {
+          keyMap[data1.programTrackedEntityAttributes[i].trackedEntityAttribute.id] = index;
+          keyMap2[index] = data1.programTrackedEntityAttributes[i].trackedEntityAttribute.id;
+          index++;
+          row = row + "<th class='rows' id='" + data1.programTrackedEntityAttributes[i].trackedEntityAttribute.id + "'>" + data1.programTrackedEntityAttributes[i].displayName + "</th>";
+        }
+        var hr = "<tr><th colspan='" + (data1.programTrackedEntityAttributes.length + 3) + "'>Attributes</th>";
+        flagg = 1;
+        getRows(row, hr, program, index);
+        w1flag = true;
+
+        if (w1flag) {
+          myWorker1.terminate();
         }
 
 
