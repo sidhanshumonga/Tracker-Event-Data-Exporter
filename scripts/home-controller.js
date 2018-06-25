@@ -292,6 +292,11 @@ msfReportsApp
         var data = obj;
         //totalPages = data.pager.total;
         enrollmentsArr = [];
+        if(data.enrollments.length==0){
+          alert("No enrollments");
+          document.getElementById('loader').style.display = "none";
+          return;
+        }
         for (var p = 0, arr = data.enrollments.length; p < arr; p++) {
           enrollmentsArr[p] = data.enrollments[p].trackedEntityInstance;
         }
