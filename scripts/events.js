@@ -273,7 +273,7 @@ msfReportsApp
     $scope.generateEventsReport = function (program) {
       $scope.isDisabled = false;
       programid = program.id;
-      $scope.exportDataJson(program);
+      // $scope.exportDataJson(program);
       var w1flag = false;
       document.getElementById('loader').style.display = "block";
 
